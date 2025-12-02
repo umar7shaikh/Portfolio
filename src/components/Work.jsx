@@ -6,6 +6,7 @@ import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
 import franccoImg from "../assets/francco.png";
 import cliImg from "../assets/cli.png";
+import { Link } from "react-router-dom";
 
 const projectsData = [
   {
