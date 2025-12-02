@@ -115,12 +115,12 @@ const Works = () => {
 
         {/* See All Works Button - Centered over grid */}
         <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-          <a
-            href="/works"
+          <Link
+            to="/works"
             className="inline-block rounded-full bg-white px-8 py-3 font-inter text-sm font-medium text-black shadow-lg transition-colors hover:bg-gray-100"
           >
             See all works
-          </a>
+          </Link>
         </div>
       </div>
 
