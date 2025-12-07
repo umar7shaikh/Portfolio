@@ -1,10 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 @keyframes scroll {
   0% {
