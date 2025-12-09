@@ -115,7 +115,7 @@ const AllWorksPage = () => {
               {/* Hero Image Section - Clickable with rounded corners and dark overlay */}
               <motion.div
                 onClick={() => toggleProject(project.id)}
-                className="relative h-screen w-full cursor-pointer overflow-hidden rounded-[1.5rem] border-4 border-white"
+                className="relative h-[70vh] w-full cursor-pointer overflow-hidden rounded-[1.5rem] border-4 border-white"
                 whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.3 }}
               >

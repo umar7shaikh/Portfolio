@@ -83,16 +83,58 @@ const Works = () => {
               onMouseEnter={() => setHoveredProject(project.id)}
               onMouseLeave={() => setHoveredProject(null)}
             >
-              {/* Project Image with blur on hover */}
-              <img
+              {/* Gradient Backdrop */}
+              <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent" />
+              
+              {/* Magnetic Image */}
+              <motion.img
                 src={project.image}
                 alt={project.title}
-                className={`h-full w-full object-cover transition-all duration-500 ${
-                  hoveredProject === project.id
-                    ? "scale-105 blur-sm"
-                    : "scale-100 blur-0"
-                }`}
+                className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110"
+                initial={false}
+                animate={hoveredProject === project.id ? { scale: 1.1 } : { scale: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               />
+
+              {/* Glass Overlay + Tech Stack */}
+              {hoveredProject === project.id && (
+                <motion.div 
+                  className="absolute inset-0 bg-black/40 backdrop-blur-sm border-2 border-white/30"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <motion.div 
+                      className="flex items-center gap-3"
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.1, duration: 0.4 }}
+                    >
+                      <div className="h-3 w-3 rounded-full bg-white animate-pulse" />
+                      <span className="font-inter text-xl font-bold text-white drop-shadow-lg">
+                        {project.title}
+                      </span>
+                    </motion.div>
+                    {/* Tech badges */}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {['React', 'Node.js', 'AI'].map((tech, i) => (
+                        <motion.span
+                          key={tech}
+                          className="px-3 py-1 text-xs bg-white/20 backdrop-blur-sm rounded-full text-white border border-white/30 hover:bg-white/30 transition-all duration-200"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + i * 0.05, duration: 0.3 }}
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          {tech}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               {/* Scrolling Text Banner - Centered */}
               {hoveredProject === project.id && (
@@ -118,7 +160,7 @@ const Works = () => {
         <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
           <Link
             to="/works"
-            className="inline-block rounded-full bg-white px-8 py-3 font-inter text-sm font-medium text-black shadow-lg transition-colors hover:bg-gray-100"
+            className="inline-block rounded-full bg-white px-8 py-3 font-inter text-sm font-medium text-black shadow-lg transition-all duration-300 hover:bg-gray-100 hover:shadow-2xl hover:scale-105"
           >
             See all works
           </Link>
@@ -143,7 +185,7 @@ const Works = () => {
           scale: { duration: 0.2 },
         }}
       >
-        <div className="rounded-full border border-white/30 bg-white/10 px-6 py-2 shadow-xl backdrop-blur-md">
+        <div className="rounded-full border border-white/30 bg-white/10 px-6 py-2 shadow-xl backdrop-blur-md hover:bg-white/20">
           <span className="whitespace-nowrap font-inter text-sm font-medium text-white">
             Open Project
           </span>

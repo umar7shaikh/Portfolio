@@ -1,245 +1,238 @@
 // src/components/Hero.jsx
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 
-const WIN_COMBOS = [
-  [0,1,2],[3,4,5],[6,7,8],
-  [0,3,6],[1,4,7],[2,5,8],
-  [0,4,8],[2,4,6],
+const SCRIPT_LINES = [
+  { prompt: "muhammed@void", command: "git clone medbot && cd medbot" },
+  { prompt: "muhammed@void", command: "pnpm dev --env=healthcare-ai" },
+  { prompt: "muhammed@void", command: "pnpm dev --env=fintech-tools" },
+  { prompt: "muhammed@void", command: "yarn dev --portfolio" },
 ];
 
 const Hero = () => {
-  const heroRef = useRef(null);
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [winner, setWinner] = useState(null);
-  const [winLine, setWinLine] = useState(null);
-  const [showGrid, setShowGrid] = useState(false);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [lineIndex, setLineIndex] = useState(0);
+  const [typed, setTyped] = useState("");
+  const [history, setHistory] = useState([]);
+  const [isDone, setIsDone] = useState(false);
 
-  // evaluate winner
-  const evalBoard = (b) => {
-    for (const combo of WIN_COMBOS) {
-      const [a, c, d] = combo;
-      if (b[a] && b[a] === b[c] && b[a] === b[d]) {
-        return { winner: b[a], line: combo };
-      }
-    }
-    if (b.every((v) => v !== null)) return { winner: "draw", line: null };
-    return { winner: null, line: null };
-  };
-
-  // smarter bot: win → block → center → random
-  const botMove = (b) => {
-    const me = "O";
-    const you = "X";
-    const empties = b
-      .map((v, i) => (v === null ? i : null))
-      .filter((v) => v !== null);
-    if (!empties.length) return b;
-
-    // try to win
-    for (const i of empties) {
-      const copy = [...b];
-      copy[i] = me;
-      if (evalBoard(copy).winner === me) return copy;
-    }
-    // block player
-    for (const i of empties) {
-      const copy = [...b];
-      copy[i] = you;
-      if (evalBoard(copy).winner === you) {
-        const real = [...b];
-        real[i] = me;
-        return real;
-      }
-    }
-    // center
-    if (b[4] === null) {
-      const copy = [...b];
-      copy[4] = me;
-      return copy;
-    }
-    // random
-    const choice = empties[Math.floor(Math.random() * empties.length)];
-    const copy = [...b];
-    copy[choice] = me;
-    return copy;
-  };
-
-  // player click
-  const handleCellClick = (idx) => {
-    if (!isPlayerTurn || winner || board[idx] === "X" || board[idx] === "O")
-      return;
-    const copy = [...board];
-    copy[idx] = "X";
-    setBoard(copy);
-    const res = evalBoard(copy);
-    if (res.winner) {
-      setWinner(res.winner);
-      setWinLine(res.line);
-    } else {
-      setIsPlayerTurn(false);
-    }
-  };
-
-  // bot turn
   useEffect(() => {
-    if (!showGrid || winner || isPlayerTurn) return;
-    const t = setTimeout(() => {
-      const after = botMove(board);
-      setBoard(after);
-      const res = evalBoard(after);
-      if (res.winner) {
-        setWinner(res.winner);
-        setWinLine(res.line);
-      } else {
-        setIsPlayerTurn(true);
+    if (isDone) return;
+
+    const { command } = SCRIPT_LINES[lineIndex];
+    setTyped("");
+
+    let i = 0;
+    const interval = setInterval(() => {
+      i += 1;
+      setTyped(command.slice(0, i));
+
+      if (i >= command.length) {
+        clearInterval(interval);
+
+        setTimeout(() => {
+          setHistory((prev) => {
+            const next = [...prev, SCRIPT_LINES[lineIndex]];
+            return next.slice(-4);
+          });
+
+          if (lineIndex === SCRIPT_LINES.length - 1) {
+            setIsDone(true);
+          } else {
+            setLineIndex((prev) => prev + 1);
+          }
+        }, 650);
       }
-    }, 450);
-    return () => clearTimeout(t);
-  }, [isPlayerTurn, winner, board, showGrid]);
+    }, 40);
 
-  // click hero → place big grid, random who starts
-  const handleHeroClick = (e) => {
-    if (!heroRef.current) return;
-    const rect = heroRef.current.getBoundingClientRect();
-    setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    return () => clearInterval(interval);
+  }, [lineIndex, isDone]);
 
-    const randomPlayerStarts = Math.random() < 0.5; // true = player, false = bot
-    setBoard(Array(9).fill(null));
-    setWinner(null);
-    setWinLine(null);
-    setShowGrid(true);
-    setIsPlayerTurn(randomPlayerStarts);
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Tiny scroll parallax for glow (optional)
+  const glowY = useTransform(scrollYProgress, [0, 1], [0, -20]);
+
+  const handleResumeDownload = () => {
+    window.open("/resume-muhammed-umar.pdf", "_blank");
+  };
+
+  const handleViewProjects = () => {
+    const el = document.getElementById("works");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <motion.section
       id="home"
-      ref={heroRef}
-      className="relative flex min-h-screen items-end rounded-[0.9rem] border-4 border-white bg-black p-0 overflow-hidden"
-      onClick={handleHeroClick}
+      ref={sectionRef}
+      className="relative flex min-h-screen items-center justify-center rounded-[0.9rem] border-4 border-white bg-black px-4 overflow-hidden"
       initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
     >
-      {/* Name stays as-is */}
-      <h1
-        className="w-full pb-8 font-inter text-white md:pb-4 pointer-events-none"
-        style={{
-          fontSize: "clamp(3rem, 12vw, 15rem)",
-          lineHeight: "0.9",
-          letterSpacing: "-0.05em",
-        }}
+      {/* ANIMATED RADIAL GLOW */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{ y: glowY }}
+        animate={{ x: ["-15%", "15%", "-15%"] }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
       >
-        Muhammed Umar
-      </h1>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.10),_transparent_60%)]" />
+      </motion.div>
 
-      {/* Neon grid only */}
-      <AnimatePresence>
-        {showGrid && (
-          <motion.div
-            className="absolute z-20"
-            style={{
-              left: pos.x,
-              top: pos.y,
-              transform: "translate(-50%, -50%)",
-            }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            onClick={(e) => e.stopPropagation()}
+      {/* FOREGROUND CONTENT */}
+      <div className="relative z-20 flex max-w-4xl flex-col gap-8 md:flex-row md:items-center">
+        {/* LEFT */}
+        <div className="flex-1 space-y-4">
+          <motion.p
+            className="text-xl md:text-3xl uppercase tracking-[0.3em] text-white/85 font-bold drop-shadow-xl bg-gradient-to-r from-white/90 via-white to-white/90 bg-clip-text"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="relative h-80 w-80 rounded-3xl bg-black/90 flex items-center justify-center">
-              {/* neon grid */}
-              <div className="pointer-events-none absolute inset-8">
-                <div className="absolute left-1/3 top-0 h-full w-[3px] bg-sky-400 shadow-[0_0_16px_#38bdf8]" />
-                <div className="absolute left-2/3 top-0 h-full w-[3px] bg-sky-400 shadow-[0_0_16px_#38bdf8]" />
-                <div className="absolute left-0 top-1/3 h-[3px] w-full bg-sky-400 shadow-[0_0_16px_#38bdf8]" />
-                <div className="absolute left-0 top-2/3 h-[3px] w-full bg-sky-400 shadow-[0_0_16px_#38bdf8]" />
-              </div>
+            full-stack engineer
+          </motion.p>
 
-              <div className="absolute inset-8 grid grid-cols-3 grid-rows-3">
-                {board.map((cell, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleCellClick(idx)}
-                    className="flex items-center justify-center"
-                  >
-                    <AnimatePresence>
-                      {cell && (
-                        <motion.span
-                          initial={{ scale: 0.3, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.3, opacity: 0 }}
-                          className={`text-6xl font-bold ${
-                            cell === "X"
-                              ? "text-red-500 drop-shadow-[0_0_26px_#ef4444]"
-                              : "text-sky-400 drop-shadow-[0_0_26px_#38bdf8]"
-                          }`}
-                        >
-                          {cell}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </button>
-                ))}
-              </div>
+          <motion.h1
+            className="font-inter text-white"
+            style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              lineHeight: 1,
+              letterSpacing: "-0.04em",
+            }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            Muhammed Umar
+          </motion.h1>
 
-              {/* winning line */}
-              {winLine && (
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.35 }}
-                  className="pointer-events-none absolute bg-sky-200 shadow-[0_0_26px_#38bdf8]"
-                  style={lineStyle(winLine)}
+          {/* CTAS */}
+          <motion.div
+            className="flex flex-wrap gap-3"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+          >
+            <motion.button
+              onClick={handleResumeDownload}
+              className="rounded-full border border-white/20 bg-white/10 hover:bg-white/20 px-6 py-2.5 text-sm font-medium text-white/90 backdrop-blur-sm hover:border-white/40 hover:text-white transition-all duration-300 flex items-center gap-2 group"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>View Resume</span>
+              <svg
+                className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 10l-5.5 5.5m0 0L12 21l5.5-5.5m-5.5 5.5V3"
                 />
-              )}
-            </div>
+              </svg>
+            </motion.button>
+
+            <motion.button
+              onClick={handleViewProjects}
+              className="rounded-full border border-white/15 px-6 py-2.5 text-sm font-medium text-white/80 hover:text-white hover:border-white/40 bg-transparent backdrop-blur-sm transition-all duration-300 flex items-center gap-2 group"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>View Projects</span>
+              <svg
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 12h14M13 5l7 7-7 7"
+                />
+              </svg>
+            </motion.button>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          <motion.p
+            className="max-w-md text-sm md:text-base text-white/80 font-medium tracking-wide drop-shadow-md"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.45 }}
+          >
+            Building React/Node apps for AI‑driven products in healthcare,
+            fintech, and real estate — with pixel‑perfect UIs and rock‑solid
+            APIs.
+          </motion.p>
+        </div>
+
+        {/* TERMINAL */}
+        <motion.div
+          className="relative z-30 mt-6 w-full max-w-md rounded-xl border border-white/10 bg-black/85 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          <div className="flex items-center justify-between border-b border-white/5 px-4 py-2">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+            </div>
+            <span className="text-[10px] text-white/40">terminal • portfolio</span>
+          </div>
+
+          <div className="space-y-1 px-5 py-3 font-mono text-xs md:text-sm text-emerald-300/90">
+            <AnimatePresence initial={false}>
+              {history.map((line, idx) => (
+                <motion.div
+                  key={`history-${line.command}-${idx}`}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex"
+                >
+                  <span className="mr-2 text-emerald-500">{line.prompt}&gt;</span>
+                  <span>{line.command}</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {!isDone && (
+              <div className="flex">
+                <span className="mr-2 text-emerald-500">
+                  {SCRIPT_LINES[lineIndex].prompt}&gt;
+                </span>
+                <span>{typed}</span>
+                <span className="ml-0.5 inline-block h-4 w-[1px] animate-pulse bg-emerald-300" />
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/5 px-4 py-2 text-[10px] text-white/40 flex justify-between">
+            <span>~/projects/portfolio</span>
+            <span>{isDone ? "ready when you are" : "typing…"}</span>
+          </div>
+        </motion.div>
+      </div>
     </motion.section>
   );
 };
-
-// positions tuned for 80x80 inner grid (inset-8) inside 320x320 card
-function lineStyle(combo) {
-  const k = combo.join(",");
-  // horizontals
-  if (k === "0,1,2") return { left: "12%", right: "12%", top: "23%", height: 3 };
-  if (k === "3,4,5") return { left: "12%", right: "12%", top: "50%", height: 3 };
-  if (k === "6,7,8") return { left: "12%", right: "12%", top: "77%", height: 3 };
-  // verticals
-  if (k === "0,3,6")
-    return { top: "12%", bottom: "12%", left: "23%", width: 3 };
-  if (k === "1,4,7")
-    return { top: "12%", bottom: "12%", left: "50%", width: 3 };
-  if (k === "2,5,8")
-    return { top: "12%", bottom: "12%", left: "77%", width: 3 };
-  // diagonals
-  if (k === "0,4,8")
-    return {
-      left: "12%",
-      right: "12%",
-      top: "50%",
-      height: 3,
-      transform: "rotate(45deg)",
-      transformOrigin: "center center",
-    };
-  if (k === "2,4,6")
-    return {
-      left: "12%",
-      right: "12%",
-      top: "50%",
-      height: 3,
-      transform: "rotate(-45deg)",
-      transformOrigin: "center center",
-    };
-  return {};
-}
 
 export default Hero;
