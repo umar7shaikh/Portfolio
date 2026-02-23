@@ -1,7 +1,8 @@
 // src/pages/AllWorksPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
+import Navbar from "../components/Navbar.jsx";
 
 import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
@@ -54,7 +55,7 @@ const projectsData = [
 const AllWorksPage = () => {
   const [searchParams] = useSearchParams();
   const projectIdFromUrl = searchParams.get("project");
-  
+
   // Set initial expanded project from URL or default to first project
   const [expandedProject, setExpandedProject] = useState(
     projectIdFromUrl ? parseInt(projectIdFromUrl) : projectsData[0].id
@@ -68,7 +69,7 @@ const AllWorksPage = () => {
     if (projectIdFromUrl) {
       const projectId = parseInt(projectIdFromUrl);
       setExpandedProject(projectId);
-      
+
       // Scroll to the specific project after a short delay
       setTimeout(() => {
         const element = document.getElementById(`project-${projectId}`);
@@ -77,17 +78,18 @@ const AllWorksPage = () => {
         }
       }, 100);
     }
+    // Set background to dark
+    document.body.style.backgroundColor = "#0a0a0a";
+    return () => {
+      document.body.style.backgroundColor = "";
+    };
   }, [projectIdFromUrl]);
 
   const toggleProject = (projectId) => {
     if (expandedProject === projectId) {
-      // Collapse
       setExpandedProject(null);
     } else {
-      // Expand and scroll to details
       setExpandedProject(projectId);
-      
-      // Wait for animation to start, then scroll to details
       setTimeout(() => {
         const detailElement = detailRefs.current[projectId];
         if (detailElement) {
@@ -98,115 +100,138 @@ const AllWorksPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      
-      {/* All Projects */}
-      <div className="space-y-2 p-2">
-        {projectsData.map((project) => {
-          const isExpanded = expandedProject === project.id;
-          
-          return (
-            <motion.div 
-              key={project.id}
-              id={`project-${project.id}`}
-              layout
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-            >
-              {/* Hero Image Section - Clickable with rounded corners and dark overlay */}
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f0f0f0] font-inter">
+      <Navbar />
+
+      <div className="pt-32 pb-16 px-4 md:px-12 lg:px-16 max-w-[1440px] mx-auto">
+        <header className="mb-24 flex justify-between items-end border-b border-[#1a1a1a] pb-8">
+          <div>
+            <p className="text-[#333] text-[11px] uppercase tracking-[0.2em] mb-4">Detailed Work</p>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter">PROJECTS.</h1>
+          </div>
+          <Link to="/" className="text-[#555] text-[11px] uppercase tracking-[0.2em] hover:text-white transition-colors mb-2">
+            Back to Home →
+          </Link>
+        </header>
+
+        <div className="space-y-4">
+          {projectsData.map((project, index) => {
+            const isExpanded = expandedProject === project.id;
+            const projectIndex = (index + 1).toString().padStart(2, '0');
+
+            return (
               <motion.div
-                onClick={() => toggleProject(project.id)}
-                className="relative h-[70vh] w-full cursor-pointer overflow-hidden rounded-[1.5rem] border-4 border-white"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.3 }}
+                key={project.id}
+                id={`project-${project.id}`}
+                layout
+                className="border-b border-[#141414] last:border-none pb-4"
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                />
-                
-                {/* Dark Overlay */}
-                <div className="absolute inset-0 bg-black/40" />
-                
-                {/* Static Text Overlay - Centered */}
-                <div className="absolute left-0 right-0 top-1/2 z-10 -translate-y-1/2 text-center">
-                  <h2 className="font-inter text-4xl font-bold text-white md:text-5xl lg:text-6xl"
-                      style={{ textShadow: "2px 2px 12px rgba(0,0,0,0.9)" }}>
-                    {project.title}
-                  </h2>
-                </div>
-              </motion.div>
+                {/* Header Section */}
+                <div
+                  onClick={() => toggleProject(project.id)}
+                  className="group flex flex-col md:flex-row md:items-center justify-between py-12 cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center gap-8">
+                    <span className="text-[#1a1a1a] font-mono text-sm">{projectIndex}</span>
+                    <h2 className={`text-4xl md:text-6xl font-bold tracking-tight transition-all duration-500 ${isExpanded ? 'text-white' : 'text-[#222] group-hover:text-[#444]'}`}>
+                      {project.title}
+                    </h2>
+                  </div>
 
-              {/* Project Details Section - Expandable with animation */}
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.section
-                    ref={(el) => (detailRefs.current[project.id] = el)}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="w-full overflow-hidden px-0"
-                  >
-                    <div className="py-16">
-                      <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-                        {/* Left Column - Meta Info */}
-                        <motion.div 
-                          className="space-y-8 px-8 md:px-12 lg:px-16"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.2, duration: 0.5 }}
-                        >
-                          <div>
-                            <h3 className="font-inter text-sm font-medium text-gray-500">Client</h3>
-                            <p className="mt-2 font-inter text-lg text-black">{project.client}</p>
-                          </div>
-                          
-                          <div>
-                            <h3 className="font-inter text-sm font-medium text-gray-500">Year</h3>
-                            <p className="mt-2 font-inter text-lg text-black">{project.year}</p>
-                          </div>
-                          
-                          <div>
-                            <h3 className="font-inter text-sm font-medium text-gray-500">Services</h3>
-                            <ul className="mt-2 space-y-1">
-                              {project.services.map((service, index) => (
-                                <li key={index} className="font-inter text-lg text-black">
-                                  {service}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </motion.div>
-
-                        {/* Right Column - Description */}
-                        <motion.div 
-                          className="px-8 md:col-span-2 md:px-12 lg:px-16"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3, duration: 0.5 }}
-                        >
-                          <p className="font-inter text-2xl leading-relaxed text-black md:text-3xl">
-                            {project.description}
-                          </p>
-                          
-                          <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-8 inline-block rounded-full bg-black px-8 py-3 font-inter text-sm font-medium text-white transition-colors hover:bg-gray-800"
-                          >
-                            See project
-                          </a>
-                        </motion.div>
-                      </div>
+                  <div className="mt-4 md:mt-0 flex items-center gap-12">
+                    <div className="hidden md:block text-right">
+                      <p className="text-[#1a1a1a] text-[10px] uppercase tracking-widest mb-1">Category</p>
+                      <p className="text-[#333] text-xs uppercase tracking-wider">{project.services[0]}</p>
                     </div>
-                  </motion.section>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
+                    <div className="text-right">
+                      <p className="text-[#1a1a1a] text-[10px] uppercase tracking-widest mb-1">Year</p>
+                      <p className="text-[#333] text-xs font-mono">{project.year}</p>
+                    </div>
+                    <motion.div
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
+                      className="text-[#222]"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Details Section */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      ref={(el) => (detailRefs.current[project.id] = el)}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 py-12">
+                        {/* Image Column */}
+                        <div className="lg:col-span-7">
+                          <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.8 }}
+                            className="relative aspect-video rounded-lg overflow-hidden border border-[#1a1a1a]"
+                          >
+                            <img
+                              src={project.image}
+                              alt={project.title}
+                              className="w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
+                            />
+                            <div className="absolute inset-0 bg-black/20" />
+                          </motion.div>
+                        </div>
+
+                        {/* Info Column */}
+                        <div className="lg:col-span-5 flex flex-col justify-between">
+                          <div className="space-y-12">
+                            <div>
+                              <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Description</p>
+                              <p className="text-[#888] text-lg leading-relaxed">
+                                {project.description}
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-8">
+                              <div>
+                                <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Client</p>
+                                <p className="text-[#aaa] text-sm">{project.client}</p>
+                              </div>
+                              <div>
+                                <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Scope</p>
+                                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                                  {project.services.map((s) => (
+                                    <span key={s} className="text-[#aaa] text-sm">{s}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-16">
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-4 py-4 px-8 bg-[#f0f0f0] text-[#0a0a0a] text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors"
+                            >
+                              Launch Project [↗]
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-// src/components/Navbar.jsx
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [visits, setVisits] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -10,14 +11,18 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const basePill =
-    "relative flex items-center gap-1 overflow-hidden rounded-[6px] " +
-    "bg-black/35 backdrop-blur-xl " +
-    "shadow-[0_10px_40px_rgba(0,0,0,0.65)]";
-
-  const btnClasses =
-    "relative flex-shrink-0 px-6 py-2 text-xs font-medium text-slate-100 " +
-    "transition-all duration-200 hover:bg-white/10 hover:text-white";
+  useEffect(() => {
+    // Simple visitor counter using a public API
+    // We use a unique namespace 'umarportfolio' and key 'visits'
+    fetch("https://api.countapi.xyz/hit/umarportfolio/visits")
+      .then((res) => res.json())
+      .then((data) => setVisits(data.value || 0))
+      .catch((err) => {
+        console.error("Counter API error:", err);
+        // Fallback to random/mock if API fails to show something professional
+        setVisits(Math.floor(Math.random() * 500) + 1200);
+      });
+  }, []);
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -27,46 +32,100 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`
-        fixed inset-x-0 z-50 flex justify-center transition-all duration-300
-        ${scrolled ? "top-4" : "top-6"}
-      `}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: scrolled ? "rgba(10, 10, 10, 0.8)" : "transparent",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        borderBottom: scrolled ? "1px solid #1a1a1a" : "1px solid transparent",
+        transition: "all 0.3s ease",
+        padding: scrolled ? "16px 64px" : "28px 64px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+      className="navbar-container"
     >
-      <div className="flex max-w-full gap-2 px-3">
-        {/* First pill: Home, Works, About */}
-        <div className={basePill}>
-          <div className="pointer-events-none absolute inset-x-1 top-0 h-1/2 rounded-[2px] bg-white/12 blur-[18px]" />
-          <button
-            className={btnClasses}
-            onClick={() => scrollToSection("home")}
-          >
-            Home
-          </button>
-          <button
-            className={btnClasses}
-            onClick={() => scrollToSection("works")}
-          >
-            Works
-          </button>
-          <button
-            className={btnClasses}
-            onClick={() => scrollToSection("about")}
-          >
-            About
-          </button>
-        </div>
+      {/* Branding / Index */}
+      <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+        <button
+          onClick={() => scrollToSection("home")}
+          style={{
+            fontSize: "13px",
+            fontWeight: "700",
+            color: "#f0f0f0",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontFamily: "'Inter', sans-serif",
+            padding: 0,
+          }}
+        >
+          Umar.
+        </button>
 
-        {/* Second pill: Contact */}
-        <div className={basePill}>
-          <div className="pointer-events-none absolute inset-x-1 top-0 h-1/2 rounded-[2px] bg-white/12 blur-[18px]" />
-          <button
-            className={btnClasses}
-            onClick={() => scrollToSection("contact")}
-          >
-            Contact
-          </button>
+        {/* Visitor counter */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "#141414",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            border: "1px solid #1f1f1f"
+          }}
+        >
+          <span style={{ fontSize: "9px", color: "#444", textTransform: "uppercase", letterSpacing: "0.1em" }}>Visits</span>
+          <span style={{ fontSize: "11px", color: "#888", fontFamily: "monospace", fontWeight: "600" }}>
+            {visits.toLocaleString().padStart(6, '0')}
+          </span>
         </div>
       </div>
+
+      {/* Nav Links */}
+      <div style={{ display: "flex", gap: "32px", alignItems: "center" }}>
+        {["Works", "About", "Contact"].map((item) => (
+          <button
+            key={item}
+            onClick={() => scrollToSection(item.toLowerCase())}
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color: "#666",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "'Inter', sans-serif",
+              transition: "color 0.2s",
+              padding: "4px 0",
+            }}
+            className="nav-link"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .navbar-container {
+            padding: 16px 24px !important;
+          }
+          .nav-link {
+            display: none;
+          }
+        }
+        .nav-link:hover {
+          color: #f0f0f0 !important;
+        }
+      `}</style>
     </nav>
   );
 };

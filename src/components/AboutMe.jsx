@@ -1,23 +1,32 @@
 // src/components/AboutMe.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import myImage from "../assets/myimage.png";
+import umarImage from "../assets/umarportfolio.png";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut", delay: i * 0.1 },
+  }),
+};
 
 const AboutMe = () => {
   const services = [
-    "Full-Stack Web Development",
-    "Frontend Development (React.js)",
-    "Mobile App Design",
+    "Full-Stack Development",
+    "React.js / Next.js",
     "Backend API Development",
-    "Database Design & Optimization",
+    "Database Design",
+    "Cloud Deployment",
+    "AI / ML Integration",
+    "Mobile App Design",
     "Website Design",
-    "Cloud Deployment (AWS/Azure)",
-    "AI/ML Integration",
   ];
 
   const experience = [
     {
-      year: "2024 - 2025",
+      year: "2024 – 2025",
       role: "Software Development Engineer Intern",
       company: "Rebert Technologies Pvt. Ltd.",
     },
@@ -27,100 +36,314 @@ const AboutMe = () => {
       company: "ITJOBXS",
     },
     {
-      year: "2021 - 2025",
+      year: "2021 – 2025",
       role: "B.E. Computer Engineering",
-      company: "Trinity College",
+      company: "Trinity College of Engineering",
     },
   ];
 
   return (
-    <motion.section
+    <section
       id="about"
-      className="relative bg-white py-8 md:min-h-screen"
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+      style={{
+        background: "#0a0a0a",
+        minHeight: "100vh",
+        padding: "0",
+        position: "relative",
+      }}
     >
-      <div className="grid grid-cols-1 gap-4 p-3 md:grid-cols-2">
-        {/* Left Grid - Text Content */}
-        <div className="relative overflow-hidden rounded-[1.5rem] border-4 border-white bg-white">
-          <div className="flex flex-col pt-8 pl-3 pr-4 pb-10 md:pt-12 md:pl-4 md:pr-12 md:pb-16">
-            {/* About Me Section */}
-            <div className="mb-12 md:mb-16">
-              <h2 className="font-inter text-[32px] md:text-[40px] text-black">
-                About me
-              </h2>
-              <div className="mt-6 space-y-4">
-                <p className="font-inter text-[18px] md:text-[24px] leading-[1.4] tracking-tight text-black">
-                  My journey into development began with a fascination for how
-                  technology can solve real-world problems and transform user
-                  experiences. I'm passionate about building scalable web
-                  applications and crafting clean, efficient code that makes a
-                  difference. From healthcare to finance, I thrive on
-                  understanding unique project requirements and delivering
-                  solutions that exceed expectations.
-                </p>
-                <p className="font-inter text-[18px] md:text-[24px] leading-[1.4] tracking-tight text-black">
-                  When I'm not coding, you'll find me exploring new frameworks,
-                  contributing to open-source projects, or diving into AI and
-                  machine learning. I believe that continuous learning is the
-                  key to growth, and I'm always eager to bring innovative
-                  approaches to software development.
-                </p>
-              </div>
-            </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          minHeight: "100vh",
+          gap: "0",
+        }}
+        className="about-grid"
+      >
+        {/* ── LEFT: Text Content ── */}
+        <div
+          style={{
+            padding: "80px 56px 80px 64px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            borderRight: "1px solid #1f1f1f",
+          }}
+          className="about-left"
+        >
+          {/* Label */}
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#555",
+              marginBottom: "20px",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            About
+          </motion.p>
 
-            {/* Services Section */}
-            <div className="mb-12 md:mb-16">
-              <h3 className="font-inter text-[32px] md:text-[40px] text-black">
-                Services
-              </h3>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {services.map((service, index) => (
-                  <span
-                    key={index}
-                    className="rounded-full bg-gray-100 px-4 py-2 md:px-6 md:py-3 font-inter text-[16px] md:text-[20px] text-black"
-                  >
-                    {service}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {/* Main Heading */}
+          <motion.h2
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={1}
+            style={{
+              fontSize: "clamp(36px, 4vw, 60px)",
+              fontWeight: "700",
+              color: "#f0f0f0",
+              lineHeight: "1.1",
+              letterSpacing: "-0.02em",
+              marginBottom: "32px",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            Engineer by training,
+            <br />
+            <span style={{ color: "#888" }}>builder by nature.</span>
+          </motion.h2>
 
-            {/* Experience Section */}
+          {/* Bio */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={2}
+            style={{ marginBottom: "52px" }}
+          >
+            <p
+              style={{
+                fontSize: "15px",
+                lineHeight: "1.8",
+                color: "#888",
+                fontFamily: "'Inter', sans-serif",
+                marginBottom: "16px",
+              }}
+            >
+              My journey into development began with a fascination for how
+              technology can solve real-world problems and transform user
+              experiences. I specialize in building scalable web applications
+              with clean, efficient code — from healthcare to finance.
+            </p>
+            <p
+              style={{
+                fontSize: "15px",
+                lineHeight: "1.8",
+                color: "#888",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              When I'm not coding, you'll find me exploring new frameworks,
+              contributing to open-source projects, or diving into AI and
+              machine learning. Continuous learning is the key to growth.
+            </p>
+          </motion.div>
+
+          {/* Services */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={3}
+            style={{ marginBottom: "52px" }}
+          >
+            <p
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#444",
+                marginBottom: "16px",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              Services
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+              {services.map((service, i) => (
+                <span
+                  key={i}
+                  style={{
+                    fontSize: "13px",
+                    color: "#aaa",
+                    border: "1px solid #252525",
+                    borderRadius: "100px",
+                    padding: "6px 16px",
+                    fontFamily: "'Inter', sans-serif",
+                    background: "#111",
+                    letterSpacing: "0.01em",
+                    transition: "border-color 0.2s, color 0.2s",
+                  }}
+                  className="about-pill"
+                >
+                  {service}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Experience Timeline */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={4}
+          >
+            <p
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#444",
+                marginBottom: "20px",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              Experience & Education
+            </p>
             <div>
-              <h3 className="font-inter text-[32px] md:text-[40px] text-black">
-                Experience
-              </h3>
-              <div className="mt-4 md:mt-6">
-                {experience.map((item, index) => (
-                  <div key={index}>
-                    <div className="py-3 md:py-4 font-inter text-[18px] md:text-[24px] text-black">
-                      {item.year}: {item.role} @{item.company}
-                    </div>
-                    <hr className="border-t border-gray-300" />
+              {experience.map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "110px 1fr",
+                    gap: "16px",
+                    padding: "20px 0",
+                    borderTop: "1px solid #1a1a1a",
+                    alignItems: "start",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#444",
+                      fontFamily: "monospace",
+                      paddingTop: "2px",
+                    }}
+                  >
+                    {item.year}
+                  </span>
+                  <div>
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        color: "#d0d0d0",
+                        fontWeight: "500",
+                        fontFamily: "'Inter', sans-serif",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {item.role}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#666",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {item.company}
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
+              <div style={{ borderTop: "1px solid #1a1a1a" }} />
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Right Grid - Image (sticky only on md+) */}
-        <div className="relative mt-4 h-80 md:mt-0 md:h-screen md:sticky md:top-1">
-          <div className="h-full w-full overflow-hidden rounded-[1.5rem] border-4 border-white">
-            <img
-              src={myImage}
-              alt="Muhammed Umar"
-              className="h-full w-full object-cover grayscale"
-              style={{ objectPosition: "center 32%" }}
+        {/* ── RIGHT: Image ── */}
+        <div
+          style={{ overflow: "hidden" }}
+          className="about-right-outer"
+        >
+          <div
+            style={{
+              position: "sticky",
+              top: "0",
+              height: "100vh",
+              overflow: "hidden",
+            }}
+            className="about-right"
+          >
+            {/* Subtle overlay gradient */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to bottom, #0a0a0a 0%, transparent 12%, transparent 80%, #0a0a0a 100%)",
+                zIndex: 2,
+                pointerEvents: "none",
+              }}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/20 via-transparent to-gray-900/30" />
+            {/* Left edge fade into border */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "60px",
+                height: "100%",
+                background: "linear-gradient(to right, #0a0a0a, transparent)",
+                zIndex: 3,
+                pointerEvents: "none",
+              }}
+            />
+            <img
+              src={umarImage}
+              alt="Muhammed Umar"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center 10%",
+                filter: "grayscale(100%) brightness(0.65) contrast(1.1)",
+                display: "block",
+              }}
+            />
           </div>
         </div>
       </div>
-    </motion.section>
+
+      {/* Responsive overrides */}
+      <style>{`
+        @media (max-width: 768px) {
+          .about-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .about-right-outer {
+            order: -1;
+          }
+          .about-right {
+            position: relative !important;
+            height: 420px !important;
+            top: auto !important;
+          }
+          .about-left {
+            padding: 60px 28px !important;
+          }
+        }
+        .about-pill:hover {
+          border-color: #444 !important;
+          color: #e0e0e0 !important;
+        }
+      `}</style>
+    </section>
   );
 };
 

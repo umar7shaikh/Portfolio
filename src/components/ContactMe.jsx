@@ -1,16 +1,26 @@
-// src/components/Contact.jsx
+// src/components/ContactMe.jsx
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut", delay: i * 0.08 },
+  }),
+};
+
 const Contacts = () => {
   const formRef = useRef(null);
   const [status, setStatus] = useState("");
+  const [sending, setSending] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Public Key:", import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-    setStatus("Sending...");
+    setSending(true);
+    setStatus("");
 
     emailjs
       .sendForm(
@@ -22,97 +32,277 @@ const Contacts = () => {
       .then(
         (res) => {
           console.log("SUCCESS", res.status, res.text);
-          setStatus("Message sent!");
+          setStatus("Message sent successfully.");
+          setSending(false);
           formRef.current.reset();
         },
         (err) => {
           console.error("EMAILJS ERROR", err);
-          setStatus("Something went wrong. Try again.");
+          setStatus("Something went wrong. Please try again.");
+          setSending(false);
         }
       );
   };
 
   return (
-    <motion.section
+    <section
       id="contact"
-      className="bg-black text-white py-8 md:py-12"
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+      style={{
+        background: "#0a0a0a",
+        borderTop: "1px solid #1a1a1a",
+      }}
     >
-      <div className="mx-auto grid max-w-12xl grid-cols-1 gap-6 px-4 md:gap-1 md:px-1 md:grid-cols-2">
-        {/* Left Column */}
-        <div className="flex flex-col justify-between px-2 py-6 md:px-6 md:py-10 lg:px-12">
+      {/* Top editorial label */}
+      <div
+        style={{
+          borderBottom: "1px solid #1a1a1a",
+          padding: "18px 64px",
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+        }}
+        className="contact-label-bar"
+      >
+        <span
+          style={{
+            fontSize: "11px",
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "#444",
+            fontFamily: "'Inter', sans-serif",
+          }}
+        >
+          Contact
+        </span>
+        <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
+      </div>
+
+      {/* Main grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          minHeight: "88vh",
+        }}
+        className="contact-grid"
+      >
+        {/* ── LEFT: Heading + Info ── */}
+        <div
+          style={{
+            padding: "72px 64px",
+            borderRight: "1px solid #1a1a1a",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+          className="contact-left"
+        >
           <div>
-            <div className="mb-8 flex items-start gap-4 md:mb-12">
-              <svg
-                className="mt-1 h-8 w-8 flex-shrink-0 text-white md:h-10 md:w-10"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-              <h2 className="font-inter text-[32px] leading-tight text-white md:text-[40px]">
-                Let's get in touch
-              </h2>
-            </div>
+            {/* Big heading */}
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={0}
+              style={{
+                fontSize: "clamp(40px, 5vw, 76px)",
+                fontWeight: "700",
+                color: "#f0f0f0",
+                lineHeight: "1.05",
+                letterSpacing: "-0.03em",
+                fontFamily: "'Inter', sans-serif",
+                marginBottom: "64px",
+              }}
+            >
+              Let's work<br />
+              <span style={{ color: "#444" }}>together.</span>
+            </motion.h2>
 
-            <div className="mb-8 md:mb-10">
-              <p className="mb-2 font-inter text-[16px] text-gray-400 md:text-[18px]">
-                Email
-              </p>
-              <a
-                href="mailto:muhammedumarshaikh7@gmail.com"
-                className="break-all font-inter text-[20px] text-white hover:text-gray-300 md:text-[22px]"
+            {/* Contact info rows */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+              {/* Email row */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={1}
+                style={{
+                  padding: "24px 0",
+                  borderTop: "1px solid #1a1a1a",
+                  display: "grid",
+                  gridTemplateColumns: "120px 1fr",
+                  gap: "16px",
+                  alignItems: "center",
+                }}
               >
-                muhammedumarshaikh7@gmail.com
-              </a>
-            </div>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "#3a3a3a",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  Email
+                </span>
+                <a
+                  href="mailto:muhammedumarshaikh7@gmail.com"
+                  style={{
+                    fontSize: "14px",
+                    color: "#999",
+                    fontFamily: "'Inter', sans-serif",
+                    textDecoration: "none",
+                    transition: "color 0.2s",
+                  }}
+                  className="contact-link"
+                >
+                  muhammedumarshaikh7@gmail.com
+                </a>
+              </motion.div>
 
-            <div className="mb-8 md:mb-10">
-              <p className="mb-3 font-inter text-[16px] text-gray-400 md:text-[18px]">
-                Channels
-              </p>
-              <div className="space-y-2">
+              {/* GitHub row */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={2}
+                style={{
+                  padding: "24px 0",
+                  borderTop: "1px solid #1a1a1a",
+                  display: "grid",
+                  gridTemplateColumns: "120px 1fr",
+                  gap: "16px",
+                  alignItems: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "11px",
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "#3a3a3a",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  GitHub
+                </span>
                 <a
                   href="https://github.com/umar7shaikh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block font-inter text-[20px] text-white hover:text-gray-300 md:text-[22px]"
+                  style={{
+                    fontSize: "14px",
+                    color: "#999",
+                    fontFamily: "'Inter', sans-serif",
+                    textDecoration: "none",
+                    transition: "color 0.2s",
+                  }}
+                  className="contact-link"
                 >
-                  GitHub
+                  github.com/umar7shaikh
                 </a>
+              </motion.div>
+
+              {/* LinkedIn row */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={3}
+                style={{
+                  padding: "24px 0",
+                  borderTop: "1px solid #1a1a1a",
+                  borderBottom: "1px solid #1a1a1a",
+                  display: "grid",
+                  gridTemplateColumns: "120px 1fr",
+                  gap: "16px",
+                  alignItems: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "11px",
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "#3a3a3a",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  LinkedIn
+                </span>
                 <a
                   href="https://www.linkedin.com/in/muhammed-umar-shaikh-/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block font-inter text-[20px] text-white hover:text-gray-300 md:text-[22px]"
+                  style={{
+                    fontSize: "14px",
+                    color: "#999",
+                    fontFamily: "'Inter', sans-serif",
+                    textDecoration: "none",
+                    transition: "color 0.2s",
+                  }}
+                  className="contact-link"
                 >
-                  LinkedIn
+                  Muhammed Umar Shaikh
                 </a>
-              </div>
+              </motion.div>
             </div>
           </div>
 
-          <p className="mt-2 font-inter text-[14px] text-gray-500 md:mt-4 md:text-[16px]">
-            © 2025 Muhammed Umar
-          </p>
+          {/* Footer copyright */}
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={4}
+            style={{
+              fontSize: "12px",
+              color: "#2e2e2e",
+              fontFamily: "'Inter', sans-serif",
+              marginTop: "48px",
+            }}
+          >
+            © 2025 Muhammed Umar. All rights reserved.
+          </motion.p>
         </div>
 
-        {/* Right Column - EmailJS Form */}
-        <div className="px-2 pb-6 pt-2 md:px-6 md:py-10 lg:px-12">
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-            <div>
+        {/* ── RIGHT: Form ── */}
+        <div
+          style={{
+            padding: "72px 64px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+          className="contact-right"
+        >
+          <motion.form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
+            style={{ display: "flex", flexDirection: "column", gap: "40px" }}
+          >
+            {/* Name */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <label
                 htmlFor="user_name"
-                className="mb-2 block font-inter text-[14px] text-gray-400 md:text-[16px]"
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#3a3a3a",
+                  fontFamily: "'Inter', sans-serif",
+                }}
               >
                 Name
               </label>
@@ -120,16 +310,35 @@ const Contacts = () => {
                 id="user_name"
                 name="user_name"
                 type="text"
-                placeholder="Enter your name"
+                placeholder="Your full name"
                 required
-                className="w-full rounded-lg bg-[#1f1f1f] px-3 py-3 font-inter text-[16px] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 md:px-4 md:text-[18px]"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: "1px solid #222",
+                  padding: "12px 0",
+                  fontSize: "15px",
+                  color: "#d0d0d0",
+                  fontFamily: "'Inter', sans-serif",
+                  outline: "none",
+                  transition: "border-color 0.2s",
+                  width: "100%",
+                }}
+                className="contact-input"
               />
             </div>
 
-            <div>
+            {/* Email */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <label
                 htmlFor="user_email"
-                className="mb-2 block font-inter text-[14px] text-gray-400 md:text-[16px]"
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#3a3a3a",
+                  fontFamily: "'Inter', sans-serif",
+                }}
               >
                 Email
               </label>
@@ -137,43 +346,140 @@ const Contacts = () => {
                 id="user_email"
                 name="user_email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="your@email.com"
                 required
-                className="w-full rounded-lg bg-[#1f1f1f] px-3 py-3 font-inter text-[16px] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 md:px-4 md:text-[18px]"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: "1px solid #222",
+                  padding: "12px 0",
+                  fontSize: "15px",
+                  color: "#d0d0d0",
+                  fontFamily: "'Inter', sans-serif",
+                  outline: "none",
+                  transition: "border-color 0.2s",
+                  width: "100%",
+                }}
+                className="contact-input"
               />
             </div>
 
-            <div>
+            {/* Message */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <label
                 htmlFor="message"
-                className="mb-2 block font-inter text-[14px] text-gray-400 md:text-[16px]"
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#3a3a3a",
+                  fontFamily: "'Inter', sans-serif",
+                }}
               >
                 Message
               </label>
               <textarea
                 id="message"
                 name="message"
-                rows={6}
-                placeholder="Type your message"
+                rows={5}
+                placeholder="Tell me about your project..."
                 required
-                className="w-full rounded-lg bg-[#1f1f1f] px-3 py-3 font-inter text-[16px] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 md:px-4 md:text-[18px]"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: "1px solid #222",
+                  padding: "12px 0",
+                  fontSize: "15px",
+                  color: "#d0d0d0",
+                  fontFamily: "'Inter', sans-serif",
+                  outline: "none",
+                  resize: "none",
+                  transition: "border-color 0.2s",
+                  width: "100%",
+                }}
+                className="contact-input"
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-[#2b2b2b] px-6 py-3 font-inter text-[16px] text-white transition-colors hover:bg-[#3a3a3a] md:text-[18px]"
-            >
-              Submit
-            </button>
-
-            {status && (
-              <p className="font-inter text-[14px] text-gray-400">{status}</p>
-            )}
-          </form>
+            {/* Submit */}
+            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginTop: "8px" }}>
+              <button
+                type="submit"
+                disabled={sending}
+                style={{
+                  background: sending ? "#1a1a1a" : "#f0f0f0",
+                  color: sending ? "#555" : "#0a0a0a",
+                  border: "none",
+                  padding: "16px 40px",
+                  fontSize: "13px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: "600",
+                  cursor: sending ? "not-allowed" : "pointer",
+                  transition: "all 0.25s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+                className="contact-btn"
+              >
+                {sending ? "Sending..." : "Send Message"}
+                {!sending && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                )}
+              </button>
+              {status && (
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: status.includes("successfully") ? "#6a6a6a" : "#7a3a3a",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  {status}
+                </p>
+              )}
+            </div>
+          </motion.form>
         </div>
       </div>
-    </motion.section>
+
+      {/* Responsive + interaction styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .contact-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .contact-left {
+            padding: 56px 28px !important;
+            border-right: none !important;
+            border-bottom: 1px solid #1a1a1a !important;
+          }
+          .contact-right {
+            padding: 48px 28px 64px !important;
+          }
+          .contact-label-bar {
+            padding: 18px 28px !important;
+          }
+        }
+        .contact-input:focus {
+          border-bottom-color: #555 !important;
+        }
+        .contact-input::placeholder {
+          color: #333;
+        }
+        .contact-link:hover {
+          color: #d0d0d0 !important;
+        }
+        .contact-btn:hover:not(:disabled) {
+          background: #ffffff !important;
+          transform: translateY(-1px);
+        }
+      `}</style>
+    </section>
   );
 };
 
