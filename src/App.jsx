@@ -5,7 +5,7 @@ import AllWorksPage from './pages/AllWorksPage';
 function App() {
   return (
     <BrowserRouter>
-      <div className="overflow-x-hidden">
+      <div>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/works" element={<AllWorksPage />} />
