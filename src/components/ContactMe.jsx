@@ -48,8 +48,8 @@ const Contacts = () => {
     <section
       id="contact"
       style={{
-        background: "#0a0a0a",
-        borderTop: "1px solid #1a1a1a",
+        background: "#ffffff",
+        borderTop: "1px solid #eaeaea",
       }}
     >
       {/* Top editorial label */}
@@ -68,13 +68,13 @@ const Contacts = () => {
             fontSize: "11px",
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#444",
+            color: "#888",
             fontFamily: "'Inter', sans-serif",
           }}
         >
           Contact
         </span>
-        <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
+        <div style={{ flex: 1, height: "1px", background: "#eaeaea" }} />
       </div>
 
       {/* Main grid */}
@@ -90,7 +90,7 @@ const Contacts = () => {
         <div
           style={{
             padding: "72px 64px",
-            borderRight: "1px solid #1a1a1a",
+            borderRight: "1px solid #eaeaea",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -108,7 +108,7 @@ const Contacts = () => {
               style={{
                 fontSize: "clamp(40px, 5vw, 76px)",
                 fontWeight: "700",
-                color: "#f0f0f0",
+                color: "#111",
                 lineHeight: "1.05",
                 letterSpacing: "-0.03em",
                 fontFamily: "'Inter', sans-serif",
@@ -116,7 +116,7 @@ const Contacts = () => {
               }}
             >
               Let's work<br />
-              <span style={{ color: "#444" }}>together.</span>
+              <span style={{ color: "#888" }}>together.</span>
             </motion.h2>
 
             {/* Contact info rows */}
@@ -196,7 +196,7 @@ const Contacts = () => {
                   rel="noopener noreferrer"
                   style={{
                     fontSize: "14px",
-                    color: "#999",
+                    color: "#555",
                     fontFamily: "'Inter', sans-serif",
                     textDecoration: "none",
                     transition: "color 0.2s",
@@ -216,8 +216,8 @@ const Contacts = () => {
                 custom={3}
                 style={{
                   padding: "24px 0",
-                  borderTop: "1px solid #1a1a1a",
-                  borderBottom: "1px solid #1a1a1a",
+                  borderTop: "1px solid #eaeaea",
+                  borderBottom: "1px solid #eaeaea",
                   display: "grid",
                   gridTemplateColumns: "120px 1fr",
                   gap: "16px",
@@ -229,7 +229,7 @@ const Contacts = () => {
                     fontSize: "11px",
                     letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "#3a3a3a",
+                    color: "#888",
                     fontFamily: "'Inter', sans-serif",
                   }}
                 >
@@ -263,7 +263,7 @@ const Contacts = () => {
             custom={4}
             style={{
               fontSize: "12px",
-              color: "#2e2e2e",
+              color: "#aaa",
               fontFamily: "'Inter', sans-serif",
               marginTop: "48px",
             }}
@@ -300,7 +300,7 @@ const Contacts = () => {
                   fontSize: "11px",
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
-                  color: "#3a3a3a",
+                  color: "#888",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
@@ -315,10 +315,10 @@ const Contacts = () => {
                 style={{
                   background: "transparent",
                   border: "none",
-                  borderBottom: "1px solid #222",
+                  borderBottom: "1px solid #e0e0e0",
                   padding: "12px 0",
                   fontSize: "15px",
-                  color: "#d0d0d0",
+                  color: "#111",
                   fontFamily: "'Inter', sans-serif",
                   outline: "none",
                   transition: "border-color 0.2s",
@@ -336,7 +336,7 @@ const Contacts = () => {
                   fontSize: "11px",
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
-                  color: "#3a3a3a",
+                  color: "#888",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
@@ -351,10 +351,10 @@ const Contacts = () => {
                 style={{
                   background: "transparent",
                   border: "none",
-                  borderBottom: "1px solid #222",
+                  borderBottom: "1px solid #e0e0e0",
                   padding: "12px 0",
                   fontSize: "15px",
-                  color: "#d0d0d0",
+                  color: "#111",
                   fontFamily: "'Inter', sans-serif",
                   outline: "none",
                   transition: "border-color 0.2s",
@@ -372,7 +372,7 @@ const Contacts = () => {
                   fontSize: "11px",
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
-                  color: "#3a3a3a",
+                  color: "#888",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
@@ -387,10 +387,10 @@ const Contacts = () => {
                 style={{
                   background: "transparent",
                   border: "none",
-                  borderBottom: "1px solid #222",
+                  borderBottom: "1px solid #e0e0e0",
                   padding: "12px 0",
                   fontSize: "15px",
-                  color: "#d0d0d0",
+                  color: "#111",
                   fontFamily: "'Inter', sans-serif",
                   outline: "none",
                   resize: "none",
@@ -407,8 +407,8 @@ const Contacts = () => {
                 type="submit"
                 disabled={sending}
                 style={{
-                  background: sending ? "#1a1a1a" : "#f0f0f0",
-                  color: sending ? "#555" : "#0a0a0a",
+                  background: sending ? "#f5f5f5" : "#111",
+                  color: sending ? "#999" : "#fff",
                   border: "none",
                   padding: "16px 40px",
                   fontSize: "13px",
@@ -435,7 +435,7 @@ const Contacts = () => {
                 <p
                   style={{
                     fontSize: "13px",
-                    color: status.includes("successfully") ? "#6a6a6a" : "#7a3a3a",
+                    color: status.includes("successfully") ? "#888" : "#d32f2f",
                     fontFamily: "'Inter', sans-serif",
                   }}
                 >
@@ -456,7 +456,7 @@ const Contacts = () => {
           .contact-left {
             padding: 56px 28px !important;
             border-right: none !important;
-            border-bottom: 1px solid #1a1a1a !important;
+            border-bottom: 1px solid #eaeaea !important;
           }
           .contact-right {
             padding: 48px 28px 64px !important;
@@ -466,16 +466,16 @@ const Contacts = () => {
           }
         }
         .contact-input:focus {
-          border-bottom-color: #555 !important;
+          border-bottom-color: #111 !important;
         }
         .contact-input::placeholder {
-          color: #333;
+          color: #aaa;
         }
         .contact-link:hover {
-          color: #d0d0d0 !important;
+          color: #111 !important;
         }
         .contact-btn:hover:not(:disabled) {
-          background: #ffffff !important;
+          background: #333 !important;
           transform: translateY(-1px);
         }
       `}</style>

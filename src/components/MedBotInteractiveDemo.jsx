@@ -68,7 +68,7 @@ const MedBotInteractiveDemo = () => {
     };
 
     return (
-        <div className="relative w-full aspect-video md:aspect-[16/10] lg:aspect-video bg-[#f8f9fa] rounded-lg overflow-hidden border border-[#1a1a1a] font-sans user-select-none shadow-xl">
+        <div className="relative w-full h-[550px] sm:h-auto sm:aspect-video md:aspect-[16/10] lg:aspect-video bg-[#f8f9fa] rounded-lg overflow-hidden border border-[#1a1a1a] font-sans user-select-none shadow-xl">
             {/* Persistent Navbar */}
             <div className="absolute top-0 w-full h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-10">
                 <div className="flex items-center gap-2">

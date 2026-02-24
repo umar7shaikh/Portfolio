@@ -3,12 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Homepage from './pages/Homepage';
 import AllWorksPage from './pages/AllWorksPage';
 import Preloader from './components/Preloader';
+import CustomCursor from './components/CustomCursor';
 
 function App() {
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   return (
     <>
+      <CustomCursor />
       <Preloader onLoadingComplete={() => setLoadingComplete(true)} />
       {/* App Content */}
       <div

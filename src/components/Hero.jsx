@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import MagneticButton from "./MagneticButton";
 
 // Scramble text reveal
 const ScrambleText = ({ text, delay = 0 }) => {
@@ -97,7 +98,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
           style={{
-            fontSize: "clamp(56px, 9vw, 152px)",
+            fontSize: "clamp(42px, 11vw, 152px)",
             fontWeight: "700",
             color: "#f0f0f0",
             lineHeight: "0.92",
@@ -185,58 +186,64 @@ const Hero = () => {
           style={{ display: "flex", gap: "16px", alignItems: "center" }}
         >
           {/* Primary — resume */}
-          <button
-            onClick={handleResumeDownload}
-            style={{
-              background: "#f0f0f0",
-              color: "#0a0a0a",
-              border: "none",
-              padding: "16px 36px",
-              fontSize: "12px",
-              fontWeight: "600",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              fontFamily: "'Inter', sans-serif",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              transition: "background 0.2s, transform 0.2s",
-            }}
-            className="hero-btn-primary"
-          >
-            View Resume
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" />
-            </svg>
-          </button>
+          <MagneticButton>
+            <div
+              onClick={handleResumeDownload}
+              style={{
+                background: "#f0f0f0",
+                color: "#0a0a0a",
+                border: "none",
+                padding: "16px 36px",
+                fontSize: "12px",
+                fontWeight: "600",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontFamily: "'Inter', sans-serif",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                transition: "background 0.2s, transform 0.2s",
+              }}
+              className="hero-btn-primary"
+              role="button"
+            >
+              View Resume
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" />
+              </svg>
+            </div>
+          </MagneticButton>
 
           {/* Secondary — projects */}
-          <button
-            onClick={handleViewProjects}
-            style={{
-              background: "transparent",
-              color: "#555",
-              border: "1px solid #222",
-              padding: "15px 36px",
-              fontSize: "12px",
-              fontWeight: "500",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              fontFamily: "'Inter', sans-serif",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              transition: "border-color 0.2s, color 0.2s, transform 0.2s",
-            }}
-            className="hero-btn-secondary"
-          >
-            View Projects
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
+          <MagneticButton>
+            <div
+              onClick={handleViewProjects}
+              style={{
+                background: "transparent",
+                color: "#555",
+                border: "1px solid #222",
+                padding: "15px 36px",
+                fontSize: "12px",
+                fontWeight: "500",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontFamily: "'Inter', sans-serif",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                transition: "border-color 0.2s, color 0.2s, transform 0.2s",
+              }}
+              className="hero-btn-secondary"
+              role="button"
+            >
+              View Projects
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </MagneticButton>
         </motion.div>
       </div>
 

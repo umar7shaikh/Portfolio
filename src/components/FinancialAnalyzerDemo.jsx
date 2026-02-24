@@ -59,7 +59,7 @@ const FinancialAnalyzerDemo = () => {
     };
 
     return (
-        <div className="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-video bg-[#0B0F19] rounded-xl overflow-hidden font-sans select-none shadow-2xl border border-blue-900/30 min-h-[400px]">
+        <div className="relative w-full h-[500px] sm:h-auto sm:aspect-video lg:aspect-video bg-[#0B0F19] rounded-xl overflow-hidden font-sans select-none shadow-2xl border border-blue-900/30">
             {/* Background Glows */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />

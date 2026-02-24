@@ -81,8 +81,8 @@ const Works = () => {
     <section
       id="works"
       style={{
-        background: "#0a0a0a",
-        borderTop: "1px solid #1a1a1a",
+        background: "#ffffff",
+        borderTop: "1px solid #eaeaea",
       }}
     >
       {/* Top label bar */}
@@ -107,7 +107,7 @@ const Works = () => {
         >
           Selected Work
         </span>
-        <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
+        <div style={{ flex: 1, height: "1px", background: "#eaeaea" }} />
         <Link
           to="/works"
           style={{
@@ -137,15 +137,15 @@ const Works = () => {
             onMouseEnter={() => setHoveredId(project.id)}
             onMouseLeave={() => setHoveredId(null)}
             style={{
-              borderBottom: "1px solid #1a1a1a",
+              borderBottom: "1px solid #eaeaea",
               padding: "0 64px",
               display: "grid",
               gridTemplateColumns: "60px 1fr auto",
               alignItems: "center",
               gap: "32px",
               cursor: "pointer",
-              transition: "background 0.3s ease",
-              background: hoveredId === project.id ? "#111" : "transparent",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              background: hoveredId === project.id ? "#0a0a0a" : "transparent",
               position: "relative",
               overflow: "hidden",
               minHeight: "100px",
@@ -156,9 +156,9 @@ const Works = () => {
             <span
               style={{
                 fontSize: "12px",
-                color: hoveredId === project.id ? "#555" : "#2a2a2a",
+                color: hoveredId === project.id ? "#666" : "#888",
                 fontFamily: "monospace",
-                transition: "color 0.3s",
+                transition: "color 0.4s",
                 userSelect: "none",
               }}
             >
@@ -171,12 +171,13 @@ const Works = () => {
                 style={{
                   fontSize: "clamp(22px, 3vw, 42px)",
                   fontWeight: "600",
-                  color: hoveredId === project.id ? "#f0f0f0" : "#2e2e2e",
+                  color: hoveredId === project.id ? "#ffffff" : "#0a0a0a",
                   letterSpacing: "-0.02em",
                   fontFamily: "'Inter', sans-serif",
-                  transition: "color 0.3s ease",
+                  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                   lineHeight: 1,
                   margin: 0,
+                  transform: hoveredId === project.id ? "translateX(24px)" : "translateX(0px)",
                 }}
               >
                 {project.title}
@@ -184,11 +185,12 @@ const Works = () => {
               <span
                 style={{
                   fontSize: "12px",
-                  color: "#333",
+                  color: hoveredId === project.id ? "#888" : "#888",
                   fontFamily: "'Inter', sans-serif",
                   letterSpacing: "0.05em",
                   opacity: hoveredId === project.id ? 1 : 0,
-                  transition: "opacity 0.3s ease",
+                  transition: "opacity 0.4s ease, color 0.4s ease",
+                  transform: hoveredId === project.id ? "translateX(24px)" : "translateX(0px)",
                 }}
               >
                 {project.category}
@@ -198,17 +200,18 @@ const Works = () => {
             {/* Tech Icons + Year + arrow */}
             <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
               {project.techs && (
-                <div style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.3s ease", marginRight: "12px" }}>
+                <div style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.4s ease", marginRight: "12px" }}>
                   {project.techs.map((techImg, i) => (
-                    <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                    <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: hoveredId === project.id ? "brightness(0) invert(1) opacity(0.8)" : "brightness(0)", transition: "filter 0.4s ease" }} />
                   ))}
                 </div>
               )}
               <span
                 style={{
                   fontSize: "12px",
-                  color: "#333",
+                  color: hoveredId === project.id ? "#888" : "#888",
                   fontFamily: "monospace",
+                  transition: "color 0.4s",
                 }}
               >
                 {project.year}
@@ -216,11 +219,11 @@ const Works = () => {
               <motion.span
                 style={{
                   fontSize: "18px",
-                  color: "#444",
+                  color: hoveredId === project.id ? "#ffffff" : "#444",
                   display: "inline-block",
                   opacity: hoveredId === project.id ? 1 : 0,
                   x: hoveredId === project.id ? 0 : -8,
-                  transition: "all 0.3s ease",
+                  transition: "all 0.4s ease",
                 }}
               >
                 ↗
@@ -237,7 +240,7 @@ const Works = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderTop: "1px solid #111",
+          borderTop: "1px solid #eaeaea",
         }}
         className="works-bottom-bar"
       >
@@ -288,10 +291,10 @@ const Works = () => {
           }
         }
         .works-view-all-link:hover {
-          color: #aaa !important;
+          color: #111 !important;
         }
         .works-all-link:hover {
-          color: #aaa !important;
+          color: #111 !important;
         }
       `}</style>
     </section >

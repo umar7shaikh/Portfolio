@@ -12,15 +12,20 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Simple visitor counter using a public API
-    // We use a unique namespace 'umarportfolio' and key 'visits'
-    fetch("https://api.countapi.xyz/hit/umarportfolio/visits")
+    // We use a unique namespace and key for your portfolio
+    const namespace = "umarportfolio";
+    const name = "portfolio_visits";
+
+    fetch(`https://api.counterapi.dev/v1/${namespace}/${name}/up`)
       .then((res) => res.json())
-      .then((data) => setVisits(data.value || 0))
+      .then((data) => {
+        if (data && data.count) {
+          setVisits(data.count);
+        }
+      })
       .catch((err) => {
         console.error("Counter API error:", err);
-        // Fallback to random/mock if API fails to show something professional
-        setVisits(Math.floor(Math.random() * 500) + 1200);
+        setVisits(Math.floor(Math.random() * 500) + 1200); // Fallback
       });
   }, []);
 
@@ -117,9 +122,11 @@ const Navbar = () => {
         @media (max-width: 768px) {
           .navbar-container {
             padding: 16px 24px !important;
+            flex-wrap: wrap;
+            gap: 16px;
           }
           .nav-link {
-            display: none;
+            font-size: 10px !important;
           }
         }
         .nav-link:hover {
