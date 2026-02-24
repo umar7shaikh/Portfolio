@@ -8,9 +8,7 @@ const CustomCursor = () => {
 
     useEffect(() => {
         const checkMobile = () => {
-            // Only hide the custom cursor based on screen width, 
-            // since many modern desktop monitors/laptops have touchscreens too.
-            setIsMobile(window.innerWidth <= 768);
+            setIsMobile(window.innerWidth <= 768 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0);
         };
         checkMobile();
         window.addEventListener("resize", checkMobile);

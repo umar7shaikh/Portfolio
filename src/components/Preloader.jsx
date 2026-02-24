@@ -38,45 +38,38 @@ const Preloader = ({ onLoadingComplete }) => {
         <AnimatePresence>
             {loading && (
                 <motion.div
-                    key="global-preloader"
+                    key="brutalist-preloader"
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, y: "-10vh" }}
+                    exit={{ y: "-100vh" }}
                     transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                    className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a0a0a]"
+                    className="fixed inset-0 z-[9999] flex flex-col justify-end p-8 bg-black text-white"
                 >
-                    <div className="flex flex-col items-center">
-                        {/* Logo Sequence */}
-                        <div className="overflow-hidden mb-8">
-                            <motion.h1
-                                initial={{ y: 50, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="text-4xl md:text-6xl font-black tracking-tighter text-white font-inter"
-                            >
-                                UMAR.
-                            </motion.h1>
-                        </div>
+                    <div className="flex justify-between items-end w-full overflow-hidden">
+                        <motion.h1
+                            initial={{ y: 100, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            style={{
+                                fontSize: "clamp(48px, 15vw, 200px)",
+                                fontWeight: "900",
+                                lineHeight: "0.8",
+                                letterSpacing: "-0.05em",
+                                fontFamily: "'Inter', sans-serif",
+                                margin: 0,
+                                padding: 0,
+                            }}
+                        >
+                            UMAR.
+                        </motion.h1>
 
-                        {/* Loading Bar Container */}
-                        <div className="w-48 h-[2px] bg-[#1a1a1a] rounded-full overflow-hidden relative">
-                            <motion.div
-                                className="absolute top-0 left-0 h-full bg-white rounded-full"
-                                initial={{ width: "0%" }}
-                                animate={{ width: `${progress}%` }}
-                                transition={{ ease: "linear", duration: 0.1 }}
-                            />
-                        </div>
-
-                        {/* Percentage Text */}
-                        <div className="mt-4 overflow-hidden h-6">
-                            <motion.div
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.4 }}
-                                className="text-[#666] text-xs font-mono tracking-widest"
-                            >
-                                LOADING {Math.round(progress)}%
-                            </motion.div>
+                        <div style={{
+                            fontSize: "clamp(24px, 5vw, 64px)",
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontWeight: "800",
+                            lineHeight: "0.8",
+                            letterSpacing: "-0.02em",
+                        }}>
+                            {(progress).toFixed(3)}%
                         </div>
                     </div>
                 </motion.div>
