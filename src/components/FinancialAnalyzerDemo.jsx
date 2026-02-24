@@ -59,7 +59,7 @@ const FinancialAnalyzerDemo = () => {
     };
 
     return (
-        <div className="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-video bg-[#0B0F19] rounded-xl overflow-hidden font-sans select-none shadow-2xl border border-blue-900/30">
+        <div className="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-video bg-[#0B0F19] rounded-xl overflow-hidden font-sans select-none shadow-2xl border border-blue-900/30 min-h-[400px]">
             {/* Background Glows */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />
@@ -197,8 +197,8 @@ const FinancialAnalyzerDemo = () => {
                             transition={{ duration: 0.6 }}
                             className="h-full flex flex-col"
                         >
-                            <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-6">
-                                <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center">
+                            <div className="flex items-center gap-3 mb-4 sm:mb-8 border-b border-white/10 pb-4 sm:pb-6 shrink-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center shrink-0">
                                     <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
@@ -209,20 +209,20 @@ const FinancialAnalyzerDemo = () => {
                                 </div>
                             </div>
 
-                            <div className="flex-1 bg-white/5 backdrop-blur-m border border-white/10 rounded-xl p-6 sm:p-8 relative">
-                                <div className="absolute top-4 right-4 text-xs font-semibold px-2 py-1 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+                            <div className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-8 relative flex flex-col min-h-0">
+                                <div className="absolute top-4 right-4 text-[10px] sm:text-xs font-semibold px-2 py-1 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30 hidden sm:block">
                                     AI Insight
                                 </div>
-                                <h3 className="text-lg text-blue-300 font-medium mb-4 flex items-center gap-2">
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <h3 className="text-base sm:text-lg text-blue-300 font-medium mb-2 sm:mb-4 flex items-center gap-2 shrink-0">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
                                     Agent Recommendation
                                 </h3>
 
-                                <div className="text-gray-200 text-base sm:text-lg leading-relaxed font-mono bg-slate-900/50 p-6 rounded-lg border border-slate-700/50 shadow-inner">
+                                <div className="flex-1 overflow-y-auto no-scrollbar text-gray-200 text-sm sm:text-base leading-relaxed font-mono bg-slate-900/50 p-4 sm:p-6 rounded-lg border border-slate-700/50 shadow-inner">
                                     <TypewriterText
-                                        text="Based on the multi-agent analysis of the Q4 Earnings Report, the recommendation is a STRONG BUY. Key Drivers include a 25% YoY revenue growth, significantly expanded profit margins, and successful market penetration in the EMEA region. Risk factors remain low."
+                                        text="Analysis complete. Recommendation: STRONG BUY. Key Drivers: 25% YoY growth, expanded margins, and high EMEA market penetration."
                                         startDelay={500}
                                         speed={30}
                                         onComplete={handleTypeComplete}

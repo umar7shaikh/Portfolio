@@ -9,6 +9,12 @@ import franccoImg from "../assets/francco.png";
 import cliImg from "../assets/cli.png";
 import theLaddersImg from "../assets/screencapture-theladders-tech.png";
 
+import reactIcon from "../assets/react-svgrepo-com.svg";
+import nodejsIcon from "../assets/nodejs-svgrepo-com.svg";
+import mongodbIcon from "../assets/mongodb-svgrepo-com.svg";
+import nextjsIcon from "../assets/next-js-svgrepo-com.svg";
+import postgresqlIcon from "../assets/postgresql-svgrepo-com.svg";
+
 const projectsData = [
   {
     id: 1,
@@ -16,31 +22,8 @@ const projectsData = [
     category: "AI / Healthcare",
     year: "2024",
     image: medbot1,
-    link: "https://github.com/yourusername/medbot",
-  },
-  {
-    id: 2,
-    title: "Financial Analyzer",
-    category: "FinTech / Data",
-    year: "2024",
-    image: financeImg,
-    link: "https://github.com/yourusername/financial-analyzer",
-  },
-  {
-    id: 3,
-    title: "Franz Co",
-    category: "Web / Branding",
-    year: "2023",
-    image: franccoImg,
-    link: "https://franzco.com",
-  },
-  {
-    id: 4,
-    title: "DevStack CLI",
-    category: "Developer Tools",
-    year: "2023",
-    image: cliImg,
-    link: "https://github.com/yourusername/devstack-cli",
+    techs: [reactIcon, nodejsIcon, mongodbIcon],
+    link: "/works?project=1",
   },
   {
     id: 5,
@@ -48,9 +31,38 @@ const projectsData = [
     category: "Web / CMS",
     year: "2024",
     image: theLaddersImg,
-    link: "https://theladders.tech",
+    techs: [nextjsIcon, reactIcon, postgresqlIcon],
+    link: "/works?project=5",
+  },
+  {
+    id: 2,
+    title: "Financial Analyzer",
+    category: "FinTech / Data",
+    year: "2024",
+    image: financeImg,
+    techs: [reactIcon],
+    link: "/works?project=2",
+  },
+  {
+    id: 4,
+    title: "DevStack CLI",
+    category: "Developer Tools",
+    year: "2024",
+    image: cliImg,
+    techs: [nodejsIcon],
+    link: "/works?project=4",
+  },
+  {
+    id: 3,
+    title: "Franz Co",
+    category: "Web / Branding",
+    year: "2024",
+    image: franccoImg,
+    techs: [reactIcon],
+    link: "/works?project=3",
   },
 ];
+
 
 const Works = () => {
   const [hoveredId, setHoveredId] = useState(null);
@@ -183,8 +195,15 @@ const Works = () => {
               </span>
             </div>
 
-            {/* Year + arrow */}
+            {/* Tech Icons + Year + arrow */}
             <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+              {project.techs && (
+                <div style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.3s ease", marginRight: "12px" }}>
+                  {project.techs.map((techImg, i) => (
+                    <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  ))}
+                </div>
+              )}
               <span
                 style={{
                   fontSize: "12px",
@@ -207,42 +226,6 @@ const Works = () => {
                 ↗
               </motion.span>
             </div>
-
-            {/* Hover image thumbnail — follows row, pinned to right */}
-            <AnimatePresence>
-              {hoveredId === project.id && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.92 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  style={{
-                    position: "absolute",
-                    right: "200px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "200px",
-                    height: "130px",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                    pointerEvents: "none",
-                    zIndex: 10,
-                    border: "1px solid #222",
-                  }}
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      filter: "grayscale(85%) brightness(0.7) contrast(1.1)",
-                    }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         ))}
       </div>
@@ -311,7 +294,7 @@ const Works = () => {
           color: #aaa !important;
         }
       `}</style>
-    </section>
+    </section >
   );
 };
 

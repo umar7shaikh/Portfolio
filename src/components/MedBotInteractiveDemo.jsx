@@ -212,7 +212,7 @@ const MedBotInteractiveDemo = () => {
                                 </div>
 
                                 {/* Messages Area */}
-                                <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6 pb-8">
+                                <div className="flex-1 p-6 overflow-y-auto no-scrollbar flex flex-col gap-6 pb-8">
 
                                     {/* New Sent Message container */}
                                     <AnimatePresence>

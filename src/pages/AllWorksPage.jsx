@@ -1,4 +1,3 @@
-```javascript
 // src/pages/AllWorksPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,6 +5,8 @@ import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import MedBotInteractiveDemo from "../components/MedBotInteractiveDemo.jsx";
 import FinancialAnalyzerDemo from "../components/FinancialAnalyzerDemo.jsx";
+import DevStackCLIDemo from "../components/DevStackCLIDemo.jsx";
+import SmoothImage from "../components/SmoothImage.jsx";
 
 import medbot1 from "../assets/medbot1.png";
 import medbotImg from "../assets/medbot.png";
@@ -28,6 +29,17 @@ const projectsData = [
     link: "https://ai-medbot.vercel.app/"
   },
   {
+    id: 5,
+    title: "TheLadders.tech",
+    client: "TheLadders.tech",
+    year: "2024",
+    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
+    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
+    image: theLaddersImg,
+    scrollableImage: theLaddersImg,
+    link: "https://theladders.tech"
+  },
+  {
     id: 2,
     title: "Financial Analyzer",
     client: "FinTech Solutions",
@@ -39,6 +51,17 @@ const projectsData = [
     link: "https://financial-analyzer-frontend.onrender.com/"
   },
   {
+    id: 4,
+    title: "DevStack CLI",
+    client: "Open Source",
+    year: "2024",
+    services: ["Node.js", "CLI Development", "NPM"],
+    description: "Created an automated project scaffolding tool that reduces development setup time by 75%. Executed a powerful template engine with customizable boilerplates for 10+ different frameworks including React, Vue, Angular, and Node.js. Published as an NPM package with comprehensive documentation.",
+    image: cliImg,
+    isInteractiveDemo: true,
+    link: "https://github.com/umar7shaikh/devstack-cli"
+  },
+  {
     id: 3,
     title: "Franz Co",
     client: "Franz Corporation",
@@ -48,27 +71,6 @@ const projectsData = [
     image: franccoImg,
     scrollableImage: franzcoScrollImg,
     link: "https://franzco.vercel.app/"
-  },
-  {
-    id: 4,
-    title: "DevStack CLI",
-    client: "Open Source",
-    year: "2024",
-    services: ["Node.js", "CLI Development", "NPM"],
-    description: "Created an automated project scaffolding tool that reduces development setup time by 75%. Executed a powerful template engine with customizable boilerplates for 10+ different frameworks including React, Vue, Angular, and Node.js. Published as an NPM package with comprehensive documentation.",
-    image: cliImg,
-    link: "https://github.com/umar7shaikh/devstack-cli"
-  },
-  {
-    id: 5,
-    title: "TheLadders.tech",
-    client: "TheLadders.tech",
-    year: "2024",
-    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
-    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
-    image: theLaddersImg,
-    scrollableImage: theLaddersImg,
-    link: "https://theladders.tech"
   }
 ];
 
@@ -92,7 +94,7 @@ const AllWorksPage = () => {
 
       // Scroll to the specific project after a short delay
       setTimeout(() => {
-        const element = document.getElementById(`project - ${ projectId } `);
+        const element = document.getElementById(`project - ${projectId} `);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -124,12 +126,12 @@ const AllWorksPage = () => {
       <Navbar />
 
       <div className="pt-32 pb-16 px-6 md:px-16 lg:px-24 w-full">
-        <header className="mb-24 flex justify-between items-end border-b border-[#1a1a1a] pb-8">
+        <header className="mb-24 flex justify-between items-end border-b border-[#333] pb-8">
           <div>
-            <p className="text-[#333] text-[11px] uppercase tracking-[0.2em] mb-4">Detailed Work</p>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter">PROJECTS.</h1>
+            <p className="text-gray-400 text-[11px] uppercase tracking-[0.2em] mb-4">Detailed Work</p>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">PROJECTS.</h1>
           </div>
-          <Link to="/" className="text-[#555] text-[11px] uppercase tracking-[0.2em] hover:text-white transition-colors mb-2">
+          <Link to="/" className="text-gray-400 text-[11px] uppercase tracking-[0.2em] hover:text-white transition-colors mb-2">
             Back to Home →
           </Link>
         </header>
@@ -142,9 +144,9 @@ const AllWorksPage = () => {
             return (
               <motion.div
                 key={project.id}
-                id={`project - ${ project.id } `}
+                id={`project-${project.id}`}
                 layout
-                className="border-b border-[#141414] last:border-none pb-4"
+                className="border-b border-gray-800 last:border-none pb-4"
               >
                 {/* Header Section */}
                 <div
@@ -152,24 +154,24 @@ const AllWorksPage = () => {
                   className="group flex flex-col md:flex-row md:items-center justify-between py-12 cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-8">
-                    <span className="text-[#1a1a1a] font-mono text-sm">{projectIndex}</span>
-                    <h2 className={`text - 4xl md: text - 6xl font - bold tracking - tight transition - all duration - 500 ${ isExpanded ? 'text-white' : 'text-[#222] group-hover:text-[#444]' } `}>
+                    <span className="text-gray-600 font-mono text-sm">{projectIndex}</span>
+                    <h2 className={`text-4xl md:text-6xl font-bold tracking-tight transition-all duration-500 ${isExpanded ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>
                       {project.title}
                     </h2>
                   </div>
 
                   <div className="mt-4 md:mt-0 flex items-center gap-12">
                     <div className="hidden md:block text-right">
-                      <p className="text-[#1a1a1a] text-[10px] uppercase tracking-widest mb-1">Category</p>
-                      <p className="text-[#333] text-xs uppercase tracking-wider">{project.services[0]}</p>
+                      <p className="text-gray-600 text-[10px] uppercase tracking-widest mb-1">Category</p>
+                      <p className="text-gray-400 text-xs uppercase tracking-wider">{project.services[0]}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[#1a1a1a] text-[10px] uppercase tracking-widest mb-1">Year</p>
-                      <p className="text-[#333] text-xs font-mono">{project.year}</p>
+                      <p className="text-gray-600 text-[10px] uppercase tracking-widest mb-1">Year</p>
+                      <p className="text-gray-400 text-xs font-mono">{project.year}</p>
                     </div>
                     <motion.div
                       animate={{ rotate: isExpanded ? 180 : 0 }}
-                      className="text-[#222]"
+                      className="text-gray-500"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
@@ -197,23 +199,25 @@ const AllWorksPage = () => {
                               <MedBotInteractiveDemo />
                             ) : project.id === 2 ? (
                               <FinancialAnalyzerDemo />
+                            ) : project.id === 4 ? (
+                              <DevStackCLIDemo />
                             ) : null
                           ) : (
                             <motion.div
                               initial={{ scale: 0.95, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               transition={{ duration: 0.8 }}
-                              className="relative aspect-[4/3] md:aspect-video rounded-lg overflow-hidden border border-[#1a1a1a] group"
+                              className="relative aspect-[4/3] md:aspect-video rounded-lg overflow-hidden border border-gray-800 group"
                             >
-                              <img
+                              <SmoothImage
                                 src={project.scrollableImage || project.image}
+                                thumbnailSrc={project.image}
                                 alt={project.title}
-                                className={`w - full h - full object - cover transition - all grayscale group - hover: grayscale - 0
-                                  ${
-  project.scrollableImage
-  ? 'object-top group-hover:object-bottom duration-[8000ms] ease-linear'
-  : 'duration-700'
-} `}
+                                className={`w-full h-full object-cover grayscale group-hover:grayscale-0 portfolio-img ${project.scrollableImage
+                                  ? 'object-top group-hover:object-bottom portfolio-img-scroll'
+                                  : ''
+                                  }`}
+                                loading="lazy"
                               />
                               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
                             </motion.div>
@@ -224,22 +228,22 @@ const AllWorksPage = () => {
                         <div className="lg:col-span-5 flex flex-col justify-between">
                           <div className="space-y-12">
                             <div>
-                              <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Description</p>
-                              <p className="text-[#888] text-lg leading-relaxed">
+                              <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-4">Description</p>
+                              <p className="text-gray-300 text-lg leading-relaxed">
                                 {project.description}
                               </p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-8">
                               <div>
-                                <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Client</p>
-                                <p className="text-[#aaa] text-sm">{project.client}</p>
+                                <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-4">Client</p>
+                                <p className="text-gray-300 text-sm">{project.client}</p>
                               </div>
                               <div>
-                                <p className="text-[#333] text-[10px] uppercase tracking-[0.2em] mb-4">Scope</p>
+                                <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-4">Scope</p>
                                 <div className="flex flex-wrap gap-x-4 gap-y-2">
                                   {project.services.map((s) => (
-                                    <span key={s} className="text-[#aaa] text-sm">{s}</span>
+                                    <span key={s} className="text-gray-300 text-sm">{s}</span>
                                   ))}
                                 </div>
                               </div>
