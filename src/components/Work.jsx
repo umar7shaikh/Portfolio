@@ -17,48 +17,10 @@ import postgresqlIcon from "../assets/postgresql-svgrepo-com.svg";
 
 const projectsData = [
   {
-    id: 1,
-    title: "MedBot",
-    category: "AI / Healthcare",
-    year: "2024",
-    image: medbot1,
-    techs: [reactIcon, nodejsIcon, mongodbIcon],
-    link: "/works?project=1",
-  },
-  {
-    id: 5,
-    title: "TheLadders.tech",
-    category: "Web / CMS",
-    year: "2024",
-    image: theLaddersImg,
-    techs: [nextjsIcon, reactIcon, postgresqlIcon],
-    link: "/works?project=5",
-  },
-  {
-    id: 2,
-    title: "Financial Analyzer",
-    category: "FinTech / Data",
-    year: "2024",
-    image: financeImg,
-    techs: [reactIcon],
-    link: "/works?project=2",
-  },
-  {
-    id: 4,
-    title: "DevStack CLI",
-    category: "Developer Tools",
-    year: "2024",
-    image: cliImg,
-    techs: [nodejsIcon],
-    link: "/works?project=4",
-  },
-  {
     id: 3,
-    title: "Franz Co",
-    category: "Web / Branding",
+    title: "FRANZ CO.",
+    category: "WEB / BRANDING",
     year: "2024",
-    image: franccoImg,
-    techs: [reactIcon],
     link: "/works?project=3",
   },
 ];
@@ -81,8 +43,8 @@ const Works = () => {
     <section
       id="works"
       style={{
-        background: "#0a0a0a",
-        borderTop: "1px solid #1a1a1a",
+        background: "transparent",
+        paddingBottom: "120px",
       }}
     >
       {/* Top label bar */}
@@ -101,8 +63,8 @@ const Works = () => {
             fontSize: "11px",
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#444",
-            fontFamily: "'Inter', sans-serif",
+            color: "#8c8c8c",
+            fontFamily: "'JetBrains Mono', monospace",
           }}
         >
           Selected Work
@@ -114,8 +76,8 @@ const Works = () => {
             fontSize: "11px",
             letterSpacing: "0.18em",
             textTransform: "uppercase",
-            color: "#444",
-            fontFamily: "'Inter', sans-serif",
+            color: "#8c8c8c",
+            fontFamily: "'JetBrains Mono', monospace",
             textDecoration: "none",
             transition: "color 0.2s",
           }}
@@ -131,102 +93,85 @@ const Works = () => {
         onMouseMove={handleMouseMove}
       >
         {projectsData.map((project, index) => (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
             key={project.id}
             onClick={() => navigate(`/works?project=${project.id}`)}
             onMouseEnter={() => setHoveredId(project.id)}
             onMouseLeave={() => setHoveredId(null)}
             style={{
-              borderBottom: "1px solid #1a1a1a",
-              padding: "0 64px",
-              display: "grid",
-              gridTemplateColumns: "60px 1fr auto",
+              borderBottom: "1px solid #fff",
+              padding: "40px 64px",
+              display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: "32px",
               cursor: "pointer",
-              transition: "background 0.3s ease",
-              background: hoveredId === project.id ? "#111" : "transparent",
+              transition: "padding 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              background: hoveredId === project.id ? "#fff" : "transparent",
               position: "relative",
               overflow: "hidden",
-              minHeight: "100px",
             }}
-            className="works-row"
+            className="works-row hover-target"
           >
-            {/* Index number */}
-            <span
-              style={{
-                fontSize: "12px",
-                color: hoveredId === project.id ? "#555" : "#2a2a2a",
-                fontFamily: "monospace",
-                transition: "color 0.3s",
-                userSelect: "none",
-              }}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-
-            {/* Title + category */}
-            <div style={{ display: "flex", alignItems: "baseline", gap: "24px" }}>
+            {/* Title */}
+            <div style={{ display: "flex", alignItems: "center", gap: "32px", zIndex: 2 }}>
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: hoveredId === project.id ? "#000" : "#666",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  transition: "color 0.4s",
+                }}
+              >
+                [0{index + 1}]
+              </span>
               <motion.h3
                 style={{
-                  fontSize: "clamp(22px, 3vw, 42px)",
-                  fontWeight: "600",
-                  color: hoveredId === project.id ? "#f0f0f0" : "#2e2e2e",
-                  letterSpacing: "-0.02em",
+                  fontSize: "clamp(48px, 6vw, 96px)",
+                  fontWeight: "900",
+                  color: hoveredId === project.id ? "#000" : "#fff",
+                  letterSpacing: "-0.04em",
                   fontFamily: "'Inter', sans-serif",
-                  transition: "color 0.3s ease",
-                  lineHeight: 1,
+                  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  textTransform: "uppercase",
+                  lineHeight: 0.8,
                   margin: 0,
+                  transform: hoveredId === project.id ? "translateX(24px)" : "translateX(0px)",
                 }}
               >
                 {project.title}
               </motion.h3>
+            </div>
+
+            {/* Category / Year */}
+            <div style={{ display: "flex", gap: "64px", alignItems: "center", zIndex: 2 }}>
               <span
                 style={{
                   fontSize: "12px",
-                  color: "#333",
-                  fontFamily: "'Inter', sans-serif",
-                  letterSpacing: "0.05em",
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  transition: "opacity 0.3s ease",
+                  color: hoveredId === project.id ? "#000" : "#fff",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  transition: "color 0.4s",
                 }}
               >
                 {project.category}
               </span>
-            </div>
-
-            {/* Tech Icons + Year + arrow */}
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-              {project.techs && (
-                <div style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.3s ease", marginRight: "12px" }}>
-                  {project.techs.map((techImg, i) => (
-                    <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                  ))}
-                </div>
-              )}
               <span
                 style={{
                   fontSize: "12px",
-                  color: "#333",
-                  fontFamily: "monospace",
+                  color: hoveredId === project.id ? "#000" : "#fff",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  transition: "color 0.4s",
                 }}
               >
                 {project.year}
               </span>
-              <motion.span
-                style={{
-                  fontSize: "18px",
-                  color: "#444",
-                  display: "inline-block",
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  x: hoveredId === project.id ? 0 : -8,
-                  transition: "all 0.3s ease",
-                }}
-              >
-                ↗
-              </motion.span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -243,26 +188,29 @@ const Works = () => {
       >
         <span
           style={{
-            fontSize: "12px",
-            color: "#272727",
-            fontFamily: "'Inter', sans-serif",
+            fontSize: "10px",
+            color: "#fff",
+            fontFamily: "'JetBrains Mono', monospace",
+            letterSpacing: "0.2em",
           }}
         >
-          {projectsData.length} projects
+          [ {projectsData.length} PROTOCOLS_DEPLOYED ]
         </span>
         <Link
           to="/works"
           style={{
             fontSize: "12px",
-            letterSpacing: "0.12em",
+            letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "#555",
-            fontFamily: "'Inter', sans-serif",
+            color: "#fff",
+            fontFamily: "'JetBrains Mono', monospace",
             textDecoration: "none",
             display: "flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "12px",
             transition: "color 0.2s",
+            border: "1px solid #fff",
+            padding: "16px 32px",
           }}
           className="works-all-link"
         >

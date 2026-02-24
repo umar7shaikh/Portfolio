@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import MagneticButton from "./MagneticButton";
 
 // Scramble text reveal
 const ScrambleText = ({ text, delay = 0 }) => {
@@ -39,6 +40,10 @@ const ScrambleText = ({ text, delay = 0 }) => {
 };
 
 const Hero = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 1000], [0, -200]);
+
   const handleResumeDownload = () => {
     window.open("/resume-muhammed-umar.pdf", "_blank");
   };
@@ -52,7 +57,7 @@ const Hero = () => {
     <section
       id="home"
       style={{
-        background: "#0a0a0a",
+        background: "#000000",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -60,7 +65,7 @@ const Hero = () => {
         overflow: "hidden",
       }}
     >
-      {/* Redundant topbar removed to allow global Navbar to shine */}
+      {/* Absolute brutalism: no orb, no fancy particles */}
 
       {/* Main content */}
       <div
@@ -80,38 +85,51 @@ const Hero = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
           style={{
-            fontSize: "11px",
-            letterSpacing: "0.22em",
+            fontSize: "12px",
+            letterSpacing: "0.4em",
             textTransform: "uppercase",
-            color: "#2a2a2a",
-            fontFamily: "'Inter', sans-serif",
-            marginBottom: "36px",
+            color: "#fff",
+            fontFamily: "'JetBrains Mono', monospace",
+            marginBottom: "16px",
           }}
         >
-          Portfolio — 2025
+          SYS.V25 // PORTFOLIO
         </motion.p>
 
         {/* Big name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-          style={{
-            fontSize: "clamp(56px, 9vw, 152px)",
-            fontWeight: "700",
-            color: "#f0f0f0",
-            lineHeight: "0.92",
-            letterSpacing: "-0.04em",
-            fontFamily: "'Inter', sans-serif",
-            marginBottom: "48px",
-          }}
-        >
-          <ScrambleText text="MUHAMMED" delay={400} />
-          <br />
-          <span style={{ color: "#2a2a2a" }}>
-            <ScrambleText text="UMAR" delay={700} />
-          </span>
-        </motion.h1>
+        <div style={{ position: "relative", width: "100vw", left: "50%", transform: "translateX(-50%)", overflow: "visible" }}>
+          <motion.h1
+            style={{
+              x: y1,
+              fontSize: "clamp(120px, 20vw, 400px)",
+              fontWeight: "900",
+              color: "#ffffff",
+              lineHeight: "0.8",
+              letterSpacing: "-0.06em",
+              fontFamily: "'Inter', sans-serif",
+              whiteSpace: "nowrap",
+              margin: 0,
+            }}
+          >
+            MUHAMMED UMAR
+          </motion.h1>
+          <motion.h1
+            style={{
+              x: y2,
+              fontSize: "clamp(120px, 20vw, 400px)",
+              fontWeight: "900",
+              color: "transparent",
+              WebkitTextStroke: "2px #333",
+              lineHeight: "0.8",
+              letterSpacing: "-0.06em",
+              fontFamily: "'Inter', sans-serif",
+              whiteSpace: "nowrap",
+              margin: 0,
+            }}
+          >
+            MUHAMMED UMAR
+          </motion.h1>
+        </div>
 
         {/* Descriptor row */}
         <motion.div
@@ -123,21 +141,22 @@ const Hero = () => {
             alignItems: "flex-start",
             gap: "64px",
             marginBottom: "64px",
+            marginTop: "64px",
           }}
           className="hero-descriptor"
         >
           <p
             style={{
-              fontSize: "15px",
-              lineHeight: "1.7",
-              color: "#555",
+              fontSize: "clamp(16px, 2vw, 24px)",
+              lineHeight: "1.2",
+              color: "#fff",
+              fontWeight: "600",
               fontFamily: "'Inter', sans-serif",
-              maxWidth: "400px",
+              maxWidth: "500px",
+              textTransform: "uppercase",
             }}
           >
-            Building scalable React &amp; Node.js applications for
-            AI-driven products — from healthcare to fintech — with
-            pixel-perfect UIs and rock-solid APIs.
+            Developing relentless logic loops and brutalist interfaces for the next generation of web-scale applications.
           </p>
 
           {/* Stats */}
@@ -150,24 +169,26 @@ const Hero = () => {
               <div key={stat.label}>
                 <p
                   style={{
-                    fontSize: "28px",
-                    fontWeight: "700",
-                    color: "#c0c0c0",
+                    fontSize: "48px",
+                    fontWeight: "900",
+                    color: "#fff",
                     fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "-0.03em",
+                    letterSpacing: "-0.05em",
                     lineHeight: 1,
-                    marginBottom: "6px",
+                    margin: 0,
                   }}
                 >
                   {stat.value}
                 </p>
+                <div style={{ width: "100%", height: "2px", background: "#fff", margin: "8px 0" }} />
                 <p
                   style={{
-                    fontSize: "11px",
-                    color: "#333",
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "0.06em",
+                    fontSize: "10px",
+                    color: "#fff",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    letterSpacing: "0.2em",
                     textTransform: "uppercase",
+                    margin: 0,
                   }}
                 >
                   {stat.label}
@@ -185,58 +206,56 @@ const Hero = () => {
           style={{ display: "flex", gap: "16px", alignItems: "center" }}
         >
           {/* Primary — resume */}
-          <button
+          <MagneticButton
             onClick={handleResumeDownload}
             style={{
-              background: "#f0f0f0",
-              color: "#0a0a0a",
+              background: "#fff",
+              color: "#000",
               border: "none",
-              padding: "16px 36px",
-              fontSize: "12px",
-              fontWeight: "600",
-              letterSpacing: "0.12em",
+              padding: "20px 48px",
+              fontSize: "14px",
+              fontWeight: "900",
+              letterSpacing: "0.15em",
               textTransform: "uppercase",
               fontFamily: "'Inter', sans-serif",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              transition: "background 0.2s, transform 0.2s",
             }}
-            className="hero-btn-primary"
+            className="hero-btn-primary hover-target"
           >
-            View Resume
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" />
+            [ EXECUTE RESUME ]
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+              <path d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v2h14v-2" />
             </svg>
-          </button>
+          </MagneticButton>
 
           {/* Secondary — projects */}
-          <button
+          <MagneticButton
             onClick={handleViewProjects}
             style={{
               background: "transparent",
-              color: "#555",
-              border: "1px solid #222",
-              padding: "15px 36px",
-              fontSize: "12px",
-              fontWeight: "500",
-              letterSpacing: "0.12em",
+              color: "#fff",
+              border: "2px solid #fff",
+              padding: "18px 48px",
+              fontSize: "14px",
+              fontWeight: "900",
+              letterSpacing: "0.15em",
               textTransform: "uppercase",
               fontFamily: "'Inter', sans-serif",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              transition: "border-color 0.2s, color 0.2s, transform 0.2s",
             }}
-            className="hero-btn-secondary"
+            className="hero-btn-secondary hover-target"
           >
-            View Projects
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            [ DECODE PROJECTS ]
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
-          </button>
+          </MagneticButton>
         </motion.div>
       </div>
 
@@ -250,7 +269,7 @@ const Hero = () => {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "20px 64px",
-          borderTop: "1px solid #141414",
+          borderTop: "2px solid #fff",
         }}
         className="hero-bottombar"
       >
@@ -261,8 +280,8 @@ const Hero = () => {
               key={t}
               style={{
                 fontSize: "11px",
-                color: "#2e2e2e",
-                fontFamily: "monospace",
+                color: "#9ca3af",
+                fontFamily: "'JetBrains Mono', monospace",
                 letterSpacing: "0.05em",
               }}
             >
@@ -290,8 +309,8 @@ const Hero = () => {
               fontSize: "11px",
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#2e2e2e",
-              fontFamily: "'Inter', sans-serif",
+              color: "#9ca3af",
+              fontFamily: "'JetBrains Mono', monospace",
             }}
           >
             Scroll
@@ -300,7 +319,7 @@ const Hero = () => {
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </motion.div>
@@ -325,18 +344,16 @@ const Hero = () => {
           }
         }
         .hero-btn-primary:hover {
-          background: #ffffff !important;
-          transform: translateY(-1px);
+          background: #ccc !important;
         }
         .hero-btn-secondary:hover {
-          border-color: #444 !important;
-          color: #aaa !important;
-          transform: translateY(-1px);
+          background: #fff !important;
+          color: #000 !important;
         }
         .hero-scroll-btn:hover span,
         .hero-scroll-btn:hover svg {
-          color: #666 !important;
-          stroke: #666 !important;
+          color: #fff !important;
+          stroke: #fff !important;
         }
       `}</style>
     </section>

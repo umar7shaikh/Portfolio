@@ -18,9 +18,21 @@ body {
     padding: 0;
     overflow-x: hidden;
     overflow-y: visible;
-    background-color: black;
+    background-color: #000000;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    color: #ffffff;
+    cursor: none;
+    /* Custom Cursor */
+}
+
+/* Global cursor overrides */
+a,
+button,
+input,
+textarea,
+select {
+    cursor: none !important;
 }
 
 body::-webkit-scrollbar {

@@ -57,7 +57,7 @@ const AboutMe = () => {
       ref={containerRef}
       id="about"
       style={{
-        background: "#0a0a0a",
+        background: "transparent",
         minHeight: "100vh",
         padding: "0",
         position: "relative",
@@ -132,210 +132,157 @@ const AboutMe = () => {
         }}
         className="about-grid"
       >
-        {/* ── LEFT: Text Content ── */}
+        {/* ── LEFT: Brutalist Swiss Grid Content ── */}
         <div
           style={{
-            padding: "120px 80px 120px 64px",
+            padding: "120px 48px 120px 64px",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "space-between",
           }}
-          className="about-left"
+          className="about-left-brutalist"
         >
-          {/* Label */}
-          <motion.p
+          {/* Top Block: Huge Type / Bio */}
+          <motion.div
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             custom={0}
             style={{
-              fontSize: "11px",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "#555",
-              marginBottom: "20px",
-              fontFamily: "'Inter', sans-serif",
+              paddingBottom: "80px",
+              borderBottom: "1px solid #fff",
             }}
           >
-            About
-          </motion.p>
+            <p style={{
+              fontSize: "12px",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "#fff",
+              marginBottom: "32px",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}>
+              [ 01 ] SYSTEM ARCHITECT
+            </p>
+            <h2 style={{
+              fontSize: "clamp(48px, 6vw, 84px)",
+              fontWeight: "900",
+              color: "#fff",
+              lineHeight: "0.9",
+              letterSpacing: "-0.04em",
+              marginBottom: "48px",
+              fontFamily: "'Inter', sans-serif",
+              textTransform: "uppercase",
+            }}>
+              ENGINEER BY
+              <br />
+              <span style={{ color: "transparent", WebkitTextStroke: "2px #fff" }}>TRAINING.</span>
+              <br />
+              BUILDER BY
+              <br />
+              <span style={{ color: "transparent", WebkitTextStroke: "2px #fff" }}>NATURE.</span>
+            </h2>
+            <p style={{
+              fontSize: "clamp(16px, 1.5vw, 20px)",
+              lineHeight: "1.6",
+              color: "#fff",
+              fontWeight: "500",
+              fontFamily: "'Inter', sans-serif",
+              maxWidth: "600px",
+            }}>
+              I specialize in extremely scalable, relentless logic loops and brutalist, high-performance web applications. My journey is rooted in solving impossible problems with lethal efficiency.
+            </p>
+          </motion.div>
 
-          {/* Main Heading */}
-          <motion.h2
+          {/* Bottom Block: Services & Experience Grid */}
+          <motion.div
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             custom={1}
             style={{
-              fontSize: "clamp(36px, 4vw, 60px)",
-              fontWeight: "700",
-              color: "#f0f0f0",
-              lineHeight: "1.1",
-              letterSpacing: "-0.02em",
-              marginBottom: "32px",
-              fontFamily: "'Inter', sans-serif",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "48px",
+              paddingTop: "80px",
             }}
+            className="about-bottom-grid"
           >
-            Engineer by training,
-            <br />
-            <span style={{ color: "#888" }}>builder by nature.</span>
-          </motion.h2>
-
-          {/* Bio */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            custom={2}
-            style={{ marginBottom: "52px", maxWidth: "540px" }}
-          >
-            <p
-              style={{
-                fontSize: "15px",
-                lineHeight: "1.8",
-                color: "#888",
-                fontFamily: "'Inter', sans-serif",
-                marginBottom: "16px",
-              }}
-            >
-              My journey into development began with a fascination for how
-              technology can solve real-world problems and transform user
-              experiences. I specialize in building scalable web applications
-              with clean, efficient code — from healthcare to finance.
-            </p>
-            <p
-              style={{
-                fontSize: "15px",
-                lineHeight: "1.8",
-                color: "#888",
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              When I'm not coding, you'll find me exploring new frameworks,
-              contributing to open-source projects, or diving into AI and
-              machine learning. Continuous learning is the key to growth.
-            </p>
-          </motion.div>
-
-          {/* Services */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            custom={3}
-            style={{ marginBottom: "52px" }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-              <p
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "#444",
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
-                Services
-              </p>
-              <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {services.map((service, i) => (
-                <span
-                  key={i}
-                  style={{
-                    fontSize: "13px",
-                    color: "#aaa",
-                    border: "1px solid #252525",
-                    borderRadius: "100px",
-                    padding: "6px 16px",
-                    fontFamily: "'Inter', sans-serif",
-                    background: "#111",
-                    letterSpacing: "0.01em",
-                    transition: "border-color 0.2s, color 0.2s",
-                  }}
-                  className="about-pill"
-                >
-                  {service}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Experience Timeline */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            custom={4}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-              <p
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "#444",
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
-                Experience & Education
-              </p>
-              <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
-            </div>
+            {/* Services */}
             <div>
-              {experience.map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "110px 1fr",
-                    gap: "16px",
-                    padding: "20px 0",
-                    borderTop: i === 0 ? "none" : "1px solid #1a1a1a",
-                    alignItems: "start",
-                  }}
-                >
-                  <span
+              <p style={{
+                fontSize: "10px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#fff",
+                fontFamily: "'JetBrains Mono', monospace",
+                marginBottom: "32px",
+              }}>
+                // PROTOCOLS
+              </p>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {services.map((service, i) => (
+                  <li
+                    key={i}
                     style={{
-                      fontSize: "12px",
-                      color: "#444",
-                      fontFamily: "monospace",
-                      paddingTop: "2px",
+                      fontSize: "13px",
+                      color: "#fff",
+                      borderBottom: "1px solid #333",
+                      padding: "16px 0",
+                      fontFamily: "'JetBrains Mono', monospace",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
                     }}
+                    className="hover-target"
                   >
-                    {item.year}
-                  </span>
-                  <div>
-                    <p
-                      style={{
-                        fontSize: "14px",
-                        color: "#d0d0d0",
-                        fontWeight: "500",
-                        fontFamily: "'Inter', sans-serif",
-                        marginBottom: "4px",
-                      }}
-                    >
+                    {service}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Experience */}
+            <div>
+              <p style={{
+                fontSize: "10px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#fff",
+                fontFamily: "'JetBrains Mono', monospace",
+                marginBottom: "32px",
+              }}>
+                // DEPLOYMENTS
+              </p>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {experience.map((item, i) => (
+                  <div key={i} style={{
+                    padding: "16px 0",
+                    borderBottom: "1px solid #333"
+                  }}>
+                    <p style={{
+                      fontSize: "14px",
+                      color: "#fff",
+                      fontWeight: "900",
+                      fontFamily: "'Inter', sans-serif",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      marginBottom: "8px",
+                    }}>
                       {item.role}
                     </p>
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "#666",
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      {item.company}
+                    <p style={{
+                      fontSize: "11px",
+                      color: "#aaa",
+                      fontFamily: "'JetBrains Mono', monospace",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                    }}>
+                      {item.company} <br /><br /> <span style={{ color: "#fff" }}>[{item.year}]</span>
                     </p>
                   </div>
-                </div>
-              ))}
-              <div style={{ borderTop: "1px solid #1a1a1a" }} />
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -361,9 +308,9 @@ const AboutMe = () => {
               width: "100%",
               maxWidth: "480px",
               aspectRatio: "4 / 5",
-              background: "#111",
-              padding: "20px", // The Museum Frame "Matte"
-              border: "1px solid #1a1a1a",
+              background: "#000",
+              padding: "20px",
+              border: "2px solid #fff",
               boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
               zIndex: 2,
             }}
@@ -374,7 +321,7 @@ const AboutMe = () => {
                 height: "100%",
                 overflow: "hidden",
                 position: "relative",
-                background: "#050505",
+                background: "#000",
               }}
             >
               {/* Halftone Grain Overlay */}
@@ -398,7 +345,7 @@ const AboutMe = () => {
                   height: "100%",
                   objectFit: "cover",
                   objectPosition: "center 10%",
-                  filter: "grayscale(100%) brightness(0.65) contrast(1.2)", // Base high contrast
+                  filter: "grayscale(100%) brightness(1.2) contrast(1.5)", // Extreme high contrast
                   display: "block",
                 }}
               />
@@ -419,8 +366,8 @@ const AboutMe = () => {
 
             {/* Editorial Metadata */}
             <div style={{ position: "absolute", bottom: -40, left: 0, display: "flex", gap: "24px" }}>
-              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>EDITION.04</span>
-              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>©2026 UMAR.CORP</span>
+              <span style={{ fontSize: "9px", fontFamily: "'JetBrains Mono', monospace", color: "#fff", letterSpacing: "0.2em" }}>SYS.V25.CORE</span>
+              <span style={{ fontSize: "9px", fontFamily: "'JetBrains Mono', monospace", color: "#fff", letterSpacing: "0.2em" }}>©2026 UMAR</span>
             </div>
           </motion.div>
 
@@ -458,9 +405,9 @@ const AboutMe = () => {
             padding: 60px 24px !important;
           }
         }
-        .about-pill:hover {
-          border-color: #444 !important;
-          color: #e0e0e0 !important;
+          .about-bottom-grid {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </section>
