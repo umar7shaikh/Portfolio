@@ -1,13 +1,19 @@
+```javascript
 // src/pages/AllWorksPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import MedBotInteractiveDemo from "../components/MedBotInteractiveDemo.jsx";
+import FinancialAnalyzerDemo from "../components/FinancialAnalyzerDemo.jsx";
 
+import medbot1 from "../assets/medbot1.png";
 import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
 import franccoImg from "../assets/francco.png";
+import franzcoScrollImg from "../assets/screencapture-franzco.png";
 import cliImg from "../assets/cli.png";
+import theLaddersImg from "../assets/screencapture-theladders-tech.png";
 
 const projectsData = [
   {
@@ -17,7 +23,8 @@ const projectsData = [
     year: "2024",
     services: ["MERN Stack", "AI Integration", "Voice Features"],
     description: "Developed a smart healthcare app that seamlessly integrates AI-powered medical assistance with voice recognition. The project involved building a secure MERN stack application with JWT authentication, role-based access control, and a responsive patient-clinician interface. Integrated Llama 4 Maverick with Whisper STT and ElevenLabs TTS for real-time voice-based medical queries, allowing users to interact naturally with the AI assistant.",
-    image: medbotImg,
+    image: medbot1,
+    isInteractiveDemo: true,
     link: "https://ai-medbot.vercel.app/"
   },
   {
@@ -28,6 +35,7 @@ const projectsData = [
     services: ["React", "FastAPI", "AI Agents"],
     description: "Built a production-ready financial analysis system with background processing, multi-user support, and responsive React interface. The platform features advanced document processing capabilities, real-time analysis, and AI-powered investment recommendations using CrewAI multi-agent system for comprehensive market research.",
     image: financeImg,
+    isInteractiveDemo: true,
     link: "https://financial-analyzer-frontend.onrender.com/"
   },
   {
@@ -38,6 +46,7 @@ const projectsData = [
     services: ["React.js", "SEO Optimization", "Performance Tuning"],
     description: "Architected a high-performance corporate website supporting 10,000+ monthly visitors with modern UI/UX design. Launched a dynamic content management system with API-driven content reducing update time by 70%. Achieved 95+ Google PageSpeed score through advanced optimization techniques, improving conversion rate by 25%.",
     image: franccoImg,
+    scrollableImage: franzcoScrollImg,
     link: "https://franzco.vercel.app/"
   },
   {
@@ -49,6 +58,17 @@ const projectsData = [
     description: "Created an automated project scaffolding tool that reduces development setup time by 75%. Executed a powerful template engine with customizable boilerplates for 10+ different frameworks including React, Vue, Angular, and Node.js. Published as an NPM package with comprehensive documentation.",
     image: cliImg,
     link: "https://github.com/umar7shaikh/devstack-cli"
+  },
+  {
+    id: 5,
+    title: "TheLadders.tech",
+    client: "TheLadders.tech",
+    year: "2024",
+    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
+    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
+    image: theLaddersImg,
+    scrollableImage: theLaddersImg,
+    link: "https://theladders.tech"
   }
 ];
 
@@ -72,7 +92,7 @@ const AllWorksPage = () => {
 
       // Scroll to the specific project after a short delay
       setTimeout(() => {
-        const element = document.getElementById(`project-${projectId}`);
+        const element = document.getElementById(`project - ${ projectId } `);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -103,7 +123,7 @@ const AllWorksPage = () => {
     <div className="min-h-screen bg-[#0a0a0a] text-[#f0f0f0] font-inter">
       <Navbar />
 
-      <div className="pt-32 pb-16 px-4 md:px-12 lg:px-16 max-w-[1440px] mx-auto">
+      <div className="pt-32 pb-16 px-6 md:px-16 lg:px-24 w-full">
         <header className="mb-24 flex justify-between items-end border-b border-[#1a1a1a] pb-8">
           <div>
             <p className="text-[#333] text-[11px] uppercase tracking-[0.2em] mb-4">Detailed Work</p>
@@ -122,7 +142,7 @@ const AllWorksPage = () => {
             return (
               <motion.div
                 key={project.id}
-                id={`project-${project.id}`}
+                id={`project - ${ project.id } `}
                 layout
                 className="border-b border-[#141414] last:border-none pb-4"
               >
@@ -133,7 +153,7 @@ const AllWorksPage = () => {
                 >
                   <div className="flex items-center gap-8">
                     <span className="text-[#1a1a1a] font-mono text-sm">{projectIndex}</span>
-                    <h2 className={`text-4xl md:text-6xl font-bold tracking-tight transition-all duration-500 ${isExpanded ? 'text-white' : 'text-[#222] group-hover:text-[#444]'}`}>
+                    <h2 className={`text - 4xl md: text - 6xl font - bold tracking - tight transition - all duration - 500 ${ isExpanded ? 'text-white' : 'text-[#222] group-hover:text-[#444]' } `}>
                       {project.title}
                     </h2>
                   </div>
@@ -172,19 +192,32 @@ const AllWorksPage = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 py-12">
                         {/* Image Column */}
                         <div className="lg:col-span-7">
-                          <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="relative aspect-video rounded-lg overflow-hidden border border-[#1a1a1a]"
-                          >
-                            <img
-                              src={project.image}
-                              alt={project.title}
-                              className="w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
-                            />
-                            <div className="absolute inset-0 bg-black/20" />
-                          </motion.div>
+                          {project.isInteractiveDemo ? (
+                            project.id === 1 ? (
+                              <MedBotInteractiveDemo />
+                            ) : project.id === 2 ? (
+                              <FinancialAnalyzerDemo />
+                            ) : null
+                          ) : (
+                            <motion.div
+                              initial={{ scale: 0.95, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ duration: 0.8 }}
+                              className="relative aspect-[4/3] md:aspect-video rounded-lg overflow-hidden border border-[#1a1a1a] group"
+                            >
+                              <img
+                                src={project.scrollableImage || project.image}
+                                alt={project.title}
+                                className={`w - full h - full object - cover transition - all grayscale group - hover: grayscale - 0
+                                  ${
+  project.scrollableImage
+  ? 'object-top group-hover:object-bottom duration-[8000ms] ease-linear'
+  : 'duration-700'
+} `}
+                              />
+                              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
+                            </motion.div>
+                          )}
                         </div>
 
                         {/* Info Column */}

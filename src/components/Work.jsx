@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import medbot1 from "../assets/medbot1.png";
 import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
 import franccoImg from "../assets/francco.png";
 import cliImg from "../assets/cli.png";
+import theLaddersImg from "../assets/screencapture-theladders-tech.png";
 
 const projectsData = [
   {
@@ -13,7 +15,7 @@ const projectsData = [
     title: "MedBot",
     category: "AI / Healthcare",
     year: "2024",
-    image: medbotImg,
+    image: medbot1,
     link: "https://github.com/yourusername/medbot",
   },
   {
@@ -39,6 +41,14 @@ const projectsData = [
     year: "2023",
     image: cliImg,
     link: "https://github.com/yourusername/devstack-cli",
+  },
+  {
+    id: 5,
+    title: "TheLadders.tech",
+    category: "Web / CMS",
+    year: "2024",
+    image: theLaddersImg,
+    link: "https://theladders.tech",
   },
 ];
 

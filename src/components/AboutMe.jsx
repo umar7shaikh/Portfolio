@@ -1,6 +1,6 @@
 // src/components/AboutMe.jsx
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import umarImage from "../assets/umarportfolio.png";
 
 const fadeUp = {
@@ -13,6 +13,16 @@ const fadeUp = {
 };
 
 const AboutMe = () => {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Giant background text parallax
+  const xLeft = useTransform(scrollYProgress, [0, 1], [-300, 300]);
+  const xRight = useTransform(scrollYProgress, [0, 1], [300, -300]);
+
   const services = [
     "Full-Stack Development",
     "React.js / Next.js",
@@ -44,31 +54,91 @@ const AboutMe = () => {
 
   return (
     <section
+      ref={containerRef}
       id="about"
       style={{
         background: "#0a0a0a",
         minHeight: "100vh",
         padding: "0",
         position: "relative",
+        overflow: "hidden",
       }}
     >
+      {/* ── HALFTONE SVG FILTER DEFINITION ── */}
+      <svg style={{ position: "absolute", width: 0, height: 0 }}>
+        <filter id="halftone">
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+          <feComponentTransfer>
+            <feFuncR type="discrete" tableValues="0 1" />
+            <feFuncG type="discrete" tableValues="0 1" />
+            <feFuncB type="discrete" tableValues="0 1" />
+          </feComponentTransfer>
+          {/* Halftone pattern logic */}
+          <feTile />
+          <feTurbulence baseFrequency="0.65" type="fractalNoise" numOctaves="3" seed="1" />
+          <feColorMatrix type="matrix" values="0 0 0 10 -5  0 0 0 10 -5  0 0 0 10 -5  0 0 1 0 0" />
+          <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
+      </svg>
+
+      {/* ── BACKGROUND GHOST TEXT ── */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "0",
+          width: "100%",
+          transform: "translateY(-50%)",
+          pointerEvents: "none",
+          zIndex: 0,
+          whiteSpace: "nowrap",
+          userSelect: "none",
+        }}
+      >
+        <motion.h3
+          style={{
+            fontSize: "25vw",
+            fontWeight: "900",
+            color: "rgba(255, 255, 255, 0.015)",
+            textTransform: "uppercase",
+            x: xLeft,
+            marginBottom: "-5vw",
+          }}
+        >
+          ENGINEER
+        </motion.h3>
+        <motion.h3
+          style={{
+            fontSize: "25vw",
+            fontWeight: "900",
+            color: "rgba(255, 255, 255, 0.015)",
+            textTransform: "uppercase",
+            x: xRight,
+            textAlign: "right",
+          }}
+        >
+          BUILDER
+        </motion.h3>
+      </div>
+
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: "1.2fr 0.8fr",
           minHeight: "100vh",
           gap: "0",
+          position: "relative",
+          zIndex: 1,
         }}
         className="about-grid"
       >
         {/* ── LEFT: Text Content ── */}
         <div
           style={{
-            padding: "80px 56px 80px 64px",
+            padding: "120px 80px 120px 64px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            borderRight: "1px solid #1f1f1f",
           }}
           className="about-left"
         >
@@ -120,7 +190,7 @@ const AboutMe = () => {
             whileInView="visible"
             viewport={{ once: true }}
             custom={2}
-            style={{ marginBottom: "52px" }}
+            style={{ marginBottom: "52px", maxWidth: "540px" }}
           >
             <p
               style={{
@@ -159,18 +229,20 @@ const AboutMe = () => {
             custom={3}
             style={{ marginBottom: "52px" }}
           >
-            <p
-              style={{
-                fontSize: "11px",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "#444",
-                marginBottom: "16px",
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              Services
-            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+              <p
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#444",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                Services
+              </p>
+              <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
+            </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
               {services.map((service, i) => (
                 <span
@@ -202,18 +274,20 @@ const AboutMe = () => {
             viewport={{ once: true }}
             custom={4}
           >
-            <p
-              style={{
-                fontSize: "11px",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "#444",
-                marginBottom: "20px",
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              Experience & Education
-            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+              <p
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#444",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                Experience & Education
+              </p>
+              <div style={{ flex: 1, height: "1px", background: "#1a1a1a" }} />
+            </div>
             <div>
               {experience.map((item, i) => (
                 <div
@@ -223,7 +297,7 @@ const AboutMe = () => {
                     gridTemplateColumns: "110px 1fr",
                     gap: "16px",
                     padding: "20px 0",
-                    borderTop: "1px solid #1a1a1a",
+                    borderTop: i === 0 ? "none" : "1px solid #1a1a1a",
                     alignItems: "start",
                   }}
                 >
@@ -266,57 +340,102 @@ const AboutMe = () => {
           </motion.div>
         </div>
 
-        {/* ── RIGHT: Image ── */}
+        {/* ── RIGHT: Museum Frame Portrait ── */}
         <div
-          style={{ overflow: "hidden" }}
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "80px",
+          }}
           className="about-right-outer"
         >
-          <div
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              position: "sticky",
-              top: "0",
-              height: "100vh",
-              overflow: "hidden",
+              position: "relative",
+              width: "100%",
+              maxWidth: "480px",
+              aspectRatio: "4 / 5",
+              background: "#111",
+              padding: "20px", // The Museum Frame "Matte"
+              border: "1px solid #1a1a1a",
+              boxShadow: "0 40px 100px rgba(0,0,0,0.6)",
+              zIndex: 2,
             }}
-            className="about-right"
           >
-            {/* Subtle overlay gradient */}
             <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(to bottom, #0a0a0a 0%, transparent 12%, transparent 80%, #0a0a0a 100%)",
-                zIndex: 2,
-                pointerEvents: "none",
-              }}
-            />
-            {/* Left edge fade into border */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "60px",
-                height: "100%",
-                background: "linear-gradient(to right, #0a0a0a, transparent)",
-                zIndex: 3,
-                pointerEvents: "none",
-              }}
-            />
-            <img
-              src={umarImage}
-              alt="Muhammed Umar"
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
-                objectPosition: "center 10%",
-                filter: "grayscale(100%) brightness(0.65) contrast(1.1)",
-                display: "block",
+                overflow: "hidden",
+                position: "relative",
+                background: "#050505",
               }}
-            />
-          </div>
+            >
+              {/* Halftone Grain Overlay */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                  opacity: 0.15,
+                  zIndex: 4,
+                  mixBlendMode: "overlay",
+                  pointerEvents: "none",
+                }}
+              />
+
+              <img
+                src={umarImage}
+                alt="Muhammed Umar"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center 10%",
+                  filter: "grayscale(100%) brightness(0.65) contrast(1.2)", // Base high contrast
+                  display: "block",
+                }}
+              />
+
+              {/* Subtle Dither Pattern Overlay */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "radial-gradient(circle, #555 1px, transparent 1px)",
+                  backgroundSize: "4px 4px",
+                  opacity: 0.1,
+                  zIndex: 5,
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
+
+            {/* Editorial Metadata */}
+            <div style={{ position: "absolute", bottom: -40, left: 0, display: "flex", gap: "24px" }}>
+              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>EDITION.04</span>
+              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>©2026 UMAR.CORP</span>
+            </div>
+          </motion.div>
+
+          {/* Background Decorative Line */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: 0,
+              width: "40%",
+              height: "1px",
+              background: "#1a1a1a",
+              zIndex: 1
+            }}
+          />
         </div>
       </div>
 
@@ -328,14 +447,15 @@ const AboutMe = () => {
           }
           .about-right-outer {
             order: -1;
+            padding: 60px 24px !important;
+            height: auto !important;
+            min-height: 500px;
           }
-          .about-right {
-            position: relative !important;
-            height: 420px !important;
-            top: auto !important;
+          .about-right-outer > div {
+             max-width: 100% !important;
           }
           .about-left {
-            padding: 60px 28px !important;
+            padding: 60px 24px !important;
           }
         }
         .about-pill:hover {
