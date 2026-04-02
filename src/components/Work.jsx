@@ -166,7 +166,7 @@ const Works = () => {
             </span>
 
             {/* Title + category */}
-            <div style={{ display: "flex", alignItems: "baseline", gap: "24px" }}>
+            <div className="works-title-col" style={{ display: "flex", alignItems: "baseline", gap: "24px" }}>
               <motion.h3
                 style={{
                   fontSize: "clamp(22px, 3vw, 42px)",
@@ -198,9 +198,9 @@ const Works = () => {
             </div>
 
             {/* Tech Icons + Year + arrow */}
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <div className="works-meta-col" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
               {project.techs && (
-                <div style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.4s ease", marginRight: "12px" }}>
+                <div className="tech-icons-container" style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.4s ease", marginRight: "12px" }}>
                   {project.techs.map((techImg, i) => (
                     <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: hoveredId === project.id ? "brightness(0) invert(1) opacity(0.8)" : "brightness(0)", transition: "filter 0.4s ease" }} />
                   ))}
@@ -217,6 +217,7 @@ const Works = () => {
                 {project.year}
               </span>
               <motion.span
+                className="works-arrow"
                 style={{
                   fontSize: "18px",
                   color: hoveredId === project.id ? "#ffffff" : "#444",
@@ -282,12 +283,53 @@ const Works = () => {
             padding: 18px 24px !important;
           }
           .works-row {
-            padding: 0 24px !important;
-            grid-template-columns: 36px 1fr auto !important;
-            gap: 16px !important;
+            padding: 40px 24px !important;
+            grid-template-columns: 48px 1fr !important;
+            gap: 0 !important;
+            align-items: flex-start !important;
+          }
+          .works-title-col {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+            width: 100%;
+          }
+          .works-title-col h3 {
+             font-size: 32px !important;
+             transform: none !important;
+             color: #0a0a0a !important;
+          }
+          .works-title-col span {
+             font-size: 14px !important;
+             color: #666 !important;
+             transform: none !important;
+             opacity: 1 !important;
+          }
+          .works-meta-col {
+            grid-column: 2 / -1;
+            justify-content: flex-start !important;
+            gap: 20px !important;
+            margin-top: 24px !important;
+            align-items: center !important;
+          }
+          .tech-icons-container {
+            margin-right: 0 !important;
+            opacity: 1 !important;
+            gap: 12px !important;
+          }
+          .tech-icons-container img {
+            width: 20px !important;
+            height: 20px !important;
+          }
+          .works-meta-col > span {
+            font-size: 14px !important;
+            color: #888 !important;
           }
           .works-bottom-bar {
-            padding: 24px 24px !important;
+            padding: 32px 24px !important;
+          }
+          .works-arrow {
+            display: none !important;
           }
         }
         .works-view-all-link:hover {
