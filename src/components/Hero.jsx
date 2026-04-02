@@ -46,7 +46,13 @@ const Hero = () => {
 
   const handleViewProjects = () => {
     const el = document.getElementById("works");
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) {
+      if (window.lenis) {
+        window.lenis.scrollTo(el);
+      } else {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
   };
 
   return (
@@ -58,7 +64,6 @@ const Hero = () => {
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        overflow: "hidden",
       }}
     >
       {/* Redundant topbar removed to allow global Navbar to shine */}

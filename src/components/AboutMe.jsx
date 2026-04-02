@@ -61,7 +61,6 @@ const AboutMe = () => {
         minHeight: "100vh",
         padding: "0",
         position: "relative",
-        overflow: "hidden",
       }}
     >
       {/* ── HALFTONE SVG FILTER DEFINITION ── */}

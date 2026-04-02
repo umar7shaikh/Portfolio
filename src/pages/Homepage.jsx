@@ -14,9 +14,16 @@ const Homepage = () => {
       const id = location.hash.replace('#', '');
       const el = document.getElementById(id);
       if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+        if (window.lenis) {
+          // Delay slightly to ensure layout is ready
+          setTimeout(() => {
+            window.lenis.scrollTo(el, { duration: 1.5 });
+          }, 100);
+        } else {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       }
     }
   }, [location]);
