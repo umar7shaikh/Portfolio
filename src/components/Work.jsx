@@ -3,19 +3,47 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import medbot1 from "../assets/medbot1.png";
-import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
-import franccoImg from "../assets/francco.png";
-import cliImg from "../assets/cli.png";
-import theLaddersImg from "../assets/screencapture-theladders-tech.png";
+import motoriqCover from "../assets/motoriq-cover.svg";
+import pravakCover from "../assets/pravak-cover.svg";
+import gadgetbazaarCover from "../assets/gadgetbazaar-cover.svg";
 
 import reactIcon from "../assets/react-svgrepo-com.svg";
 import nodejsIcon from "../assets/nodejs-svgrepo-com.svg";
 import mongodbIcon from "../assets/mongodb-svgrepo-com.svg";
 import nextjsIcon from "../assets/next-js-svgrepo-com.svg";
 import postgresqlIcon from "../assets/postgresql-svgrepo-com.svg";
+import springbootIcon from "../assets/springboot-svgrepo-com.svg";
+import voiceIcon from "../assets/voice-svgrepo-com.svg";
 
 const projectsData = [
+  {
+    id: 6,
+    title: "Motoriq.in",
+    category: "SaaS / Automotive",
+    year: "2025",
+    image: motoriqCover,
+    techs: [springbootIcon, reactIcon, postgresqlIcon],
+    link: "/works?project=6",
+  },
+  {
+    id: 7,
+    title: "Pravak AI",
+    category: "AI / Voice Agents",
+    year: "2025",
+    image: pravakCover,
+    techs: [voiceIcon, reactIcon],
+    link: "/works?project=7",
+  },
+  {
+    id: 8,
+    title: "GadgetBazaar",
+    category: "E-commerce / Retail",
+    year: "2025",
+    image: gadgetbazaarCover,
+    techs: [nextjsIcon, reactIcon, postgresqlIcon],
+    link: "/works?project=8",
+  },
   {
     id: 1,
     title: "MedBot",
@@ -26,15 +54,6 @@ const projectsData = [
     link: "/works?project=1",
   },
   {
-    id: 5,
-    title: "TheLadders.tech",
-    category: "Web / CMS",
-    year: "2024",
-    image: theLaddersImg,
-    techs: [nextjsIcon, reactIcon, postgresqlIcon],
-    link: "/works?project=5",
-  },
-  {
     id: 2,
     title: "Financial Analyzer",
     category: "FinTech / Data",
@@ -42,24 +61,6 @@ const projectsData = [
     image: financeImg,
     techs: [reactIcon],
     link: "/works?project=2",
-  },
-  {
-    id: 4,
-    title: "DevStack CLI",
-    category: "Developer Tools",
-    year: "2024",
-    image: cliImg,
-    techs: [nodejsIcon],
-    link: "/works?project=4",
-  },
-  {
-    id: 3,
-    title: "Franz Co",
-    category: "Web / Branding",
-    year: "2024",
-    image: franccoImg,
-    techs: [reactIcon],
-    link: "/works?project=3",
   },
 ];
 

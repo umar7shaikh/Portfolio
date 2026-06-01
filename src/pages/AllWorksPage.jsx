@@ -6,17 +6,60 @@ import Navbar from "../components/Navbar.jsx";
 import MedBotInteractiveDemo from "../components/MedBotInteractiveDemo.jsx";
 import FinancialAnalyzerDemo from "../components/FinancialAnalyzerDemo.jsx";
 import DevStackCLIDemo from "../components/DevStackCLIDemo.jsx";
+import MotoriqDemo from "../components/MotoriqDemo.jsx";
+import PravakDemo from "../components/PravakDemo/index.tsx";
+import GadgetBazaarDemo from "../components/GadgetBazaarDemo/index.tsx";
+import MotoriqMobile from "../components/mobile/MotoriqMobile.jsx";
+import PravakMobile from "../components/mobile/PravakMobile.jsx";
+import GadgetBazaarMobile from "../components/mobile/GadgetBazaarMobile.jsx";
+import useIsMobile from "../components/useIsMobile.js";
 import SmoothImage from "../components/SmoothImage.jsx";
 
 import medbot1 from "../assets/medbot1.png";
-import medbotImg from "../assets/medbot.png";
 import financeImg from "../assets/finance.png";
 import franccoImg from "../assets/francco.png";
-import franzcoScrollImg from "../assets/screencapture-franzco.png";
+import franzcoScrollImg from "../assets/screencapture-franzco.jpg";
 import cliImg from "../assets/cli.png";
 import theLaddersImg from "../assets/screencapture-theladders-tech.png";
+import motoriqCover from "../assets/motoriq-cover.svg";
+import pravakCover from "../assets/pravak-cover.svg";
+import gadgetbazaarCover from "../assets/gadgetbazaar-cover.svg";
 
 const projectsData = [
+  {
+    id: 6,
+    title: "Motoriq.in",
+    client: "Motoriq (motoriq.in)",
+    year: "2025",
+    services: ["Spring Boot", "React 19 PWA", "Multi-tenant SaaS"],
+    description: "Architected and built a multi-tenant SaaS that runs the day-to-day operations of Indian vehicle dealerships — inventory, sales, CRM, expenses and staff, each dealership fully isolated. The Spring Boot backend enforces strict tenant isolation and role-based access (Super Admin / Admin / Staff) over JWT, while the React 19 PWA delivers an installable, offline-capable dashboard with 360° vehicle viewers, QR vehicle profiles and AI-generated listings. Ships India-specific compliance including the GST Margin Scheme and RTO-ready invoices.",
+    image: motoriqCover,
+    isInteractiveDemo: true,
+    link: "https://motoriq.in"
+  },
+  {
+    id: 7,
+    title: "Pravak AI",
+    client: "Pravak AI",
+    year: "2025",
+    services: ["Voice AI", "Real-time Telephony", "LLM Agents"],
+    description: "Designed Pravak AI, an autonomous voice agent that answers and places phone calls in natural, human-like conversation — handling appointment booking, lead qualification and customer support around the clock. The pipeline streams low-latency speech-to-text into an LLM reasoning layer with business-aware context, then expressive text-to-speech, and takes real actions like reserving slots and sending confirmations. Built to never miss a call and to hand off cleanly to a human whenever needed.",
+    image: pravakCover,
+    isInteractiveDemo: true,
+    comingSoon: true,
+    previewLink: "https://call-agent-frontend.pages.dev/"
+  },
+  {
+    id: 8,
+    title: "GadgetBazaar",
+    client: "GadgetBazaar",
+    year: "2025",
+    services: ["Next.js 16", "Supabase", "Razorpay"],
+    description: "Built a complete production e-commerce store for mobile and electronics accessories — earbuds, covers, chargers, power banks and more. The Next.js 16 storefront serves SEO-friendly server-rendered product pages with search, filtering, wishlist and cart, backed by Razorpay/UPI payments, Cash-on-Delivery and automated Shiprocket fulfilment. A full admin panel manages products, orders and a dynamic blog, all on Supabase (Postgres + storage).",
+    image: gadgetbazaarCover,
+    isInteractiveDemo: true,
+    link: "https://ecommerce-omega-nine-38.vercel.app/"
+  },
   {
     id: 1,
     title: "MedBot",
@@ -29,17 +72,6 @@ const projectsData = [
     link: "https://ai-medbot.vercel.app/"
   },
   {
-    id: 5,
-    title: "TheLadders.tech",
-    client: "TheLadders.tech",
-    year: "2024",
-    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
-    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
-    image: theLaddersImg,
-    scrollableImage: theLaddersImg,
-    link: "https://theladders.tech"
-  },
-  {
     id: 2,
     title: "Financial Analyzer",
     client: "FinTech Solutions",
@@ -49,6 +81,17 @@ const projectsData = [
     image: financeImg,
     isInteractiveDemo: true,
     link: "https://financial-analyzer-frontend.onrender.com/"
+  },
+  {
+    id: 5,
+    title: "TheLadders.tech",
+    client: "TheLadders.tech",
+    year: "2024",
+    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
+    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
+    image: theLaddersImg,
+    scrollableImage: theLaddersImg,
+    link: "https://theladders.tech"
   },
   {
     id: 4,
@@ -77,6 +120,7 @@ const projectsData = [
 const AllWorksPage = () => {
   const [searchParams] = useSearchParams();
   const projectIdFromUrl = searchParams.get("project");
+  const isMobile = useIsMobile();
 
   // Set initial expanded project from URL or default to first project
   const [expandedProject, setExpandedProject] = useState(
@@ -94,7 +138,7 @@ const AllWorksPage = () => {
 
       // Scroll to the specific project after a short delay
       setTimeout(() => {
-        const element = document.getElementById(`project - ${projectId} `);
+        const element = document.getElementById(`project-${projectId}`);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -201,6 +245,12 @@ const AllWorksPage = () => {
                               <FinancialAnalyzerDemo />
                             ) : project.id === 4 ? (
                               <DevStackCLIDemo />
+                            ) : project.id === 6 ? (
+                              isMobile ? <MotoriqMobile /> : <MotoriqDemo />
+                            ) : project.id === 7 ? (
+                              isMobile ? <PravakMobile /> : <PravakDemo />
+                            ) : project.id === 8 ? (
+                              isMobile ? <GadgetBazaarMobile /> : <GadgetBazaarDemo />
                             ) : null
                           ) : (
                             <motion.div
@@ -250,15 +300,32 @@ const AllWorksPage = () => {
                             </div>
                           </div>
 
-                          <div className="mt-16">
-                            <a
-                              href={project.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-4 py-4 px-8 bg-[#f0f0f0] text-[#0a0a0a] text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors"
-                            >
-                              Launch Project [↗]
-                            </a>
+                          <div className="mt-16 flex flex-wrap items-center gap-6">
+                            {project.comingSoon || !project.link ? (
+                              <span className="inline-flex items-center gap-3 py-4 px-8 border border-gray-700 text-gray-400 text-xs font-bold uppercase tracking-widest cursor-default">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                                Launching Soon
+                              </span>
+                            ) : (
+                              <a
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-4 py-4 px-8 bg-[#f0f0f0] text-[#0a0a0a] text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors"
+                              >
+                                Launch Project [↗]
+                              </a>
+                            )}
+                            {project.previewLink && (
+                              <a
+                                href={project.previewLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-gray-700 pb-1 hover:text-white hover:border-white transition-colors"
+                              >
+                                Preview the app [↗]
+                              </a>
+                            )}
                           </div>
                         </div>
                       </div>

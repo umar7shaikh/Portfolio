@@ -1,20 +1,80 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.webp" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Brutalist Fonts -->
+  <!-- ═══════════════════════════════════════════════
+       PRIMARY SEO — Title & Description
+       ═══════════════════════════════════════════════ -->
+  <title>Muhammed Umar Shaikh — Full-Stack Developer & Software Engineer</title>
+  <meta name="description" content="Portfolio of Muhammed Umar Shaikh (Umar Shaikh) — Full-Stack Software Engineer specialising in React, Node.js, Spring Boot, and AI-driven products. Based in India." />
+  <meta name="keywords" content="Muhammed Umar, Muhammed Umar Shaikh, Umar Shaikh, muhammedumar, umar portfolio, full stack developer, React developer, Node.js, Spring Boot, software engineer India, umar7shaikh" />
+  <meta name="author" content="Muhammed Umar Shaikh" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Canonical — prevents duplicate-content penalties -->
+  <link rel="canonical" href="https://muhammedumar.in/" />
+
+  <!-- ═══════════════════════════════════════════════
+       OPEN GRAPH (WhatsApp, LinkedIn, Facebook previews)
+       ═══════════════════════════════════════════════ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://muhammedumar.in/" />
+  <meta property="og:title" content="Muhammed Umar Shaikh — Full-Stack Developer" />
+  <meta property="og:description" content="Full-Stack Engineer building React & Node.js products for AI-driven startups — from healthcare to fintech. View projects and get in touch." />
+  <meta property="og:image" content="https://muhammedumar.in/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:site_name" content="Muhammed Umar Shaikh Portfolio" />
+
+  <!-- ═══════════════════════════════════════════════
+       TWITTER CARD
+       ═══════════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Muhammed Umar Shaikh — Full-Stack Developer" />
+  <meta name="twitter:description" content="Full-Stack Engineer building React & Node.js products for AI-driven startups." />
+  <meta name="twitter:image" content="https://muhammedumar.in/og-preview.png" />
+
+  <!-- ═══════════════════════════════════════════════
+       JSON-LD STRUCTURED DATA — Person Schema
+       This is what makes Google surface YOUR exact
+       result when someone searches your name.
+       ═══════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Muhammed Umar Shaikh",
+    "alternateName": ["Umar Shaikh", "Muhammed Umar", "muhammedumar", "umar7shaikh"],
+    "url": "https://muhammedumar.in/",
+    "image": "https://muhammedumar.in/og-preview.png",
+    "jobTitle": "Full-Stack Software Engineer",
+    "description": "Full-Stack Software Engineer specialising in React, Node.js, Spring Boot, and AI-driven product development.",
+    "nationality": "Indian",
+    "sameAs": [
+      "https://github.com/umar7shaikh",
+      "https://www.linkedin.com/in/muhammed-umar-shaikh-/"
+    ],
+    "knowsAbout": ["React", "Node.js", "Spring Boot", "TypeScript", "PostgreSQL", "AI Integration", "Full-Stack Development"],
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Freelance / Independent"
+    }
+  }
+  </script>
+
+  <!-- ═══════════════════════════════════════════════
+       FAVICON & FONTS
+       ═══════════════════════════════════════════════ -->
+  <link rel="icon" type="image/webp" href="/vite.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap"
     rel="stylesheet">
-
-  <title>Umar Portfolio</title>
 </head>
 
 <body>
@@ -22,4 +82,4 @@
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
-</html>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MotorIQ — interactive demo</title>
+  <meta name="robots" content="noindex">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Embedded full-bleed on the marketing hero as a clean floating window:
+       the parent <iframe> supplies the rounded frame, border and shadow, so we
+       drop the demo's MacBook chrome and dark backdrop and just fill the frame. */
+    html, body.fullscreen-mode { background: transparent; height: 100%; }
+    body.fullscreen-mode { display: block; }
+    #motoriq-root { width: 100vw; height: 100vh; display: flex; }
+  </style>
+</head>
+<body class="fullscreen-mode">
+
+  <div id="motoriq-root"></div>
+
+  <!-- React (production UMD, vendored locally) then the prebuilt demo bundle.
+       Source lives in ./source/ — run `node source/build.mjs` to rebuild motoriq-demo.js. -->
+  <script src="vendor/react.production.min.js"></script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script src="motoriq-demo.js?v=5"></script>
+</body>
+</html>

@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SmoothImage = ({ src, thumbnailSrc, alt, wrapperClassName, className, style, ...props }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef(null);
+
+    // In production, images served from cache fire `load` before React attaches
+    // the onLoad handler — so the opacity stays at 0 forever. Checking
+    // img.complete after mount catches those already-loaded images.
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setIsLoaded(true);
+        }
+    }, [src]);
 
     return (
         <div className={`relative overflow-hidden w-full h-full ${wrapperClassName || ""}`} style={style}>
@@ -40,10 +50,20 @@ const SmoothImage = ({ src, thumbnailSrc, alt, wrapperClassName, className, styl
 
             {/* Actual Image */}
             <motion.img
+                ref={imgRef}
                 src={src}
                 alt={alt}
                 className={`w-full h-full object-cover relative z-10 ${className || ""}`}
                 onLoad={() => setIsLoaded(true)}
+                onError={(e) => {
+                    // If the full image fails (e.g. too large / network), fall back
+                    // to the thumbnail so the slot never renders blank in prod.
+                    if (thumbnailSrc && e.currentTarget.src !== thumbnailSrc) {
+                        e.currentTarget.src = thumbnailSrc;
+                    } else {
+                        setIsLoaded(true);
+                    }
+                }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isLoaded ? 1 : 0 }}
                 transition={{ duration: 0.6 }}
