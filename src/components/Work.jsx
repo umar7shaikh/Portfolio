@@ -1,346 +1,252 @@
 // src/components/Work.jsx
-import React, { useState } from "react";
+// Selected work as an explorable 3D island: every project is a building.
+// The scene itself is lazy loaded so three.js never blocks the first paint.
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import medbot1 from "../assets/medbot1.png";
-import financeImg from "../assets/finance.png";
-import motoriqCover from "../assets/motoriq-cover.svg";
-import pravakCover from "../assets/pravak-cover.svg";
-import gadgetbazaarCover from "../assets/gadgetbazaar-cover.svg";
+import { projects } from "../data/projects.js";
+import "./city/city.css";
 
-import reactIcon from "../assets/react-svgrepo-com.svg";
-import nodejsIcon from "../assets/nodejs-svgrepo-com.svg";
-import mongodbIcon from "../assets/mongodb-svgrepo-com.svg";
-import nextjsIcon from "../assets/next-js-svgrepo-com.svg";
-import postgresqlIcon from "../assets/postgresql-svgrepo-com.svg";
-import springbootIcon from "../assets/springboot-svgrepo-com.svg";
-import voiceIcon from "../assets/voice-svgrepo-com.svg";
+const CityScene = lazy(() => import("./city/CityScene.jsx"));
 
-const projectsData = [
-  {
-    id: 6,
-    title: "Motoriq.in",
-    category: "SaaS / Automotive",
-    year: "2025",
-    image: motoriqCover,
-    techs: [springbootIcon, reactIcon, postgresqlIcon],
-    link: "/works?project=6",
-  },
-  {
-    id: 7,
-    title: "Pravak AI",
-    category: "AI / Voice Agents",
-    year: "2025",
-    image: pravakCover,
-    techs: [voiceIcon, reactIcon],
-    link: "/works?project=7",
-  },
-  {
-    id: 8,
-    title: "GadgetBazaar",
-    category: "E-commerce / Retail",
-    year: "2025",
-    image: gadgetbazaarCover,
-    techs: [nextjsIcon, reactIcon, postgresqlIcon],
-    link: "/works?project=8",
-  },
-  {
-    id: 1,
-    title: "MedBot",
-    category: "AI / Healthcare",
-    year: "2024",
-    image: medbot1,
-    techs: [reactIcon, nodejsIcon, mongodbIcon],
-    link: "/works?project=1",
-  },
-  {
-    id: 2,
-    title: "Financial Analyzer",
-    category: "FinTech / Data",
-    year: "2024",
-    image: financeImg,
-    techs: [reactIcon],
-    link: "/works?project=2",
-  },
-];
+const hasWebGL = () => {
+  try {
+    const c = document.createElement("canvas");
+    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+  } catch {
+    return false;
+  }
+};
 
+const useMedia = (q) => {
+  const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(q);
+    const on = () => setM(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, [q]);
+  return m;
+};
+
+function Loader({ active }) {
+  return (
+    <AnimatePresence>
+      {active && (
+        <motion.div
+          className="city-loader"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.6 } }}
+        >
+          <span>Building the island</span>
+          <div className="city-loader-bar"><div /></div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function Panel({ project, index, onClose, onStep }) {
+  const navigate = useNavigate();
+  return (
+    <motion.aside
+      key={project.key}
+      className="city-panel"
+      style={{ "--accent": project.accent }}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      aria-live="polite"
+    >
+      <div className="city-panel-top">
+        <span className="city-panel-idx">
+          {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+        </span>
+        <button type="button" className="city-icon-btn" onClick={onClose} aria-label="Back to the island">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <p className="city-panel-meta">{project.category} · {project.year}</p>
+      <h3 className="city-panel-title">{project.title}</h3>
+      <p className="city-panel-role"><span className="city-dot" />{project.role}</p>
+      <p className="city-panel-summary">{project.summary}</p>
+
+      <ul className="city-panel-list">
+        {project.highlights.map((h) => <li key={h}>{h}</li>)}
+      </ul>
+
+      <div className="city-panel-stack">
+        {project.stack.map((s) => <span key={s}>{s}</span>)}
+      </div>
+
+      <div className="city-panel-actions">
+        <button type="button" className="city-btn-primary" onClick={() => navigate(`/works?project=${project.id}`)}>
+          Case study &amp; demo
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </button>
+        {project.link && (
+          <a className="city-btn-ghost" href={project.link} target="_blank" rel="noopener noreferrer">Live ↗</a>
+        )}
+      </div>
+
+      <div className="city-panel-nav">
+        <button type="button" onClick={() => onStep(-1)} aria-label="Previous project">← Prev</button>
+        <button type="button" onClick={() => onStep(1)} aria-label="Next project">Next →</button>
+      </div>
+    </motion.aside>
+  );
+}
+
+function FallbackList() {
+  const navigate = useNavigate();
+  return (
+    <div className="city-fallback">
+      {projects.map((p, i) => (
+        <button key={p.key} type="button" onClick={() => navigate(`/works?project=${p.id}`)}>
+          <span>{String(i + 1).padStart(2, "0")}</span>
+          <strong>{p.title}</strong>
+          <em>{p.category} · {p.year}</em>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 const Works = () => {
-  const [hoveredId, setHoveredId] = useState(null);
-  const [imgPos, setImgPos] = useState({ x: 0, y: 0 });
-  const navigate = useNavigate();
+  const stageRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [webgl] = useState(hasWebGL);
+  const [activeKey, setActiveKey] = useState(null);
+  const [hoverKey, setHoverKey] = useState(null);
+  const [ready, setReady] = useState(false);
+  const touch = useMedia("(hover: none), (pointer: coarse)");
+  const narrow = useMedia("(max-width: 820px)");
+  const reduced = useMedia("(prefers-reduced-motion: reduce)");
 
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setImgPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
+  // Mount the canvas shortly before the section scrolls in, and pause
+  // rendering whenever it is off screen.
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const near = new IntersectionObserver(([e]) => e.isIntersecting && setMounted(true), { rootMargin: "800px 0px" });
+    const seen = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0 });
+    near.observe(el);
+    seen.observe(el);
+    return () => { near.disconnect(); seen.disconnect(); };
+  }, []);
+
+  const select = useCallback((key) => setActiveKey(key), []);
+  const hover = useCallback((key) => setHoverKey(key), []);
+
+  const index = projects.findIndex((p) => p.key === activeKey);
+  const step = useCallback((d) => {
+    const i = Math.max(0, projects.findIndex((p) => p.key === activeKey));
+    setActiveKey(projects[(i + d + projects.length) % projects.length].key);
+  }, [activeKey]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setActiveKey(null);
+      if (!activeKey) return;
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [visible, activeKey, step]);
+
+  // Let the custom cursor grow while a building is under the pointer.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("cursor-hover", { detail: !!hoverKey }));
+  }, [hoverKey]);
+
+  const active = index >= 0 ? projects[index] : null;
 
   return (
-    <section
-      id="works"
-      style={{
-        background: "#ffffff",
-        borderTop: "1px solid #eaeaea",
-      }}
-    >
-      {/* Top label bar */}
-      <div
-        style={{
-          borderBottom: "1px solid #1a1a1a",
-          padding: "18px 64px",
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-        }}
-        className="works-label-bar"
-      >
-        <span
-          style={{
-            fontSize: "11px",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "#444",
-            fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          Selected Work
-        </span>
-        <div style={{ flex: 1, height: "1px", background: "#eaeaea" }} />
-        <Link
-          to="/works"
-          style={{
-            fontSize: "11px",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "#444",
-            fontFamily: "'Inter', sans-serif",
-            textDecoration: "none",
-            transition: "color 0.2s",
-          }}
-          className="works-view-all-link"
-        >
-          View All →
-        </Link>
+    <section id="works" className="works-city">
+      <div className="works-label-bar">
+        <span className="works-label">Selected Work</span>
+        <div className="works-label-line" />
+        <Link to="/works" className="works-view-all-link">View all →</Link>
       </div>
 
-      {/* Project list */}
-      <div
-        style={{ position: "relative" }}
-        onMouseMove={handleMouseMove}
-      >
-        {projectsData.map((project, index) => (
-          <div
-            key={project.id}
-            onClick={() => navigate(`/works?project=${project.id}`)}
-            onMouseEnter={() => setHoveredId(project.id)}
-            onMouseLeave={() => setHoveredId(null)}
-            style={{
-              borderBottom: "1px solid #eaeaea",
-              padding: "0 64px",
-              display: "grid",
-              gridTemplateColumns: "60px 1fr auto",
-              alignItems: "center",
-              gap: "32px",
-              cursor: "pointer",
-              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-              background: hoveredId === project.id ? "#0a0a0a" : "transparent",
-              position: "relative",
-              overflow: "hidden",
-              minHeight: "100px",
-            }}
-            className="works-row"
-          >
-            {/* Index number */}
-            <span
-              style={{
-                fontSize: "12px",
-                color: hoveredId === project.id ? "#666" : "#888",
-                fontFamily: "monospace",
-                transition: "color 0.4s",
-                userSelect: "none",
-              }}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
+      <div ref={stageRef} className={`city-stage${hoverKey ? " is-hovering" : ""}`}>
+        {webgl ? (
+          <>
+            {mounted && (
+              <Suspense fallback={null}>
+                <CityScene
+                  activeKey={activeKey}
+                  hoverKey={hoverKey}
+                  onHover={hover}
+                  onSelect={select}
+                  lowPower={touch || narrow}
+                  reduced={reduced}
+                  interactive={!touch}
+                  visible={visible}
+                  panelOpen={!!active}
+                  onReady={() => setReady(true)}
+                />
+              </Suspense>
+            )}
+            <Loader active={!ready} />
 
-            {/* Title + category */}
-            <div className="works-title-col" style={{ display: "flex", alignItems: "baseline", gap: "24px" }}>
-              <motion.h3
-                style={{
-                  fontSize: "clamp(22px, 3vw, 42px)",
-                  fontWeight: "600",
-                  color: hoveredId === project.id ? "#ffffff" : "#0a0a0a",
-                  letterSpacing: "-0.02em",
-                  fontFamily: "'Inter', sans-serif",
-                  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                  lineHeight: 1,
-                  margin: 0,
-                  transform: hoveredId === project.id ? "translateX(24px)" : "translateX(0px)",
-                }}
-              >
-                {project.title}
-              </motion.h3>
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: hoveredId === project.id ? "#888" : "#888",
-                  fontFamily: "'Inter', sans-serif",
-                  letterSpacing: "0.05em",
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  transition: "opacity 0.4s ease, color 0.4s ease",
-                  transform: hoveredId === project.id ? "translateX(24px)" : "translateX(0px)",
-                }}
-              >
-                {project.category}
-              </span>
-            </div>
-
-            {/* Tech Icons + Year + arrow */}
-            <div className="works-meta-col" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-              {project.techs && (
-                <div className="tech-icons-container" style={{ display: "flex", gap: "12px", opacity: hoveredId === project.id ? 1 : 0.4, transition: "opacity 0.4s ease", marginRight: "12px" }}>
-                  {project.techs.map((techImg, i) => (
-                    <img key={i} src={techImg} alt="tech icon" style={{ width: "22px", height: "22px", objectFit: "contain", filter: hoveredId === project.id ? "brightness(0) invert(1) opacity(0.8)" : "brightness(0)", transition: "filter 0.4s ease" }} />
-                  ))}
-                </div>
+            <AnimatePresence>
+              {!active && (
+                <motion.div
+                  className="city-intro"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="city-intro-kicker">{String(projects.length).padStart(2, "0")} projects · one island</p>
+                  <h2 className="city-intro-title">Every building<br />is something I shipped.</h2>
+                  <p className="city-intro-hint">
+                    {touch ? "Tap a building or a name below" : "Drag to orbit · click a building to step inside"}
+                  </p>
+                </motion.div>
               )}
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: hoveredId === project.id ? "#888" : "#888",
-                  fontFamily: "monospace",
-                  transition: "color 0.4s",
-                }}
-              >
-                {project.year}
-              </span>
-              <motion.span
-                className="works-arrow"
-                style={{
-                  fontSize: "18px",
-                  color: hoveredId === project.id ? "#ffffff" : "#444",
-                  display: "inline-block",
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  x: hoveredId === project.id ? 0 : -8,
-                  transition: "all 0.4s ease",
-                }}
-              >
-                ↗
-              </motion.span>
-            </div>
-          </div>
-        ))}
-      </div>
+            </AnimatePresence>
 
-      {/* Bottom bar */}
-      <div
-        style={{
-          padding: "28px 64px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderTop: "1px solid #eaeaea",
-        }}
-        className="works-bottom-bar"
-      >
-        <span
-          style={{
-            fontSize: "12px",
-            color: "#272727",
-            fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          {projectsData.length} projects
-        </span>
-        <Link
-          to="/works"
-          style={{
-            fontSize: "12px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "#555",
-            fontFamily: "'Inter', sans-serif",
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            transition: "color 0.2s",
-          }}
-          className="works-all-link"
-        >
-          View all works
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </Link>
-      </div>
+            <AnimatePresence mode="wait">
+              {active && (
+                <Panel
+                  key={active.key}
+                  project={active}
+                  index={index}
+                  onClose={() => setActiveKey(null)}
+                  onStep={step}
+                />
+              )}
+            </AnimatePresence>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .works-label-bar {
-            padding: 18px 24px !important;
-          }
-          .works-row {
-            padding: 40px 24px !important;
-            grid-template-columns: 48px 1fr !important;
-            gap: 0 !important;
-            align-items: flex-start !important;
-          }
-          .works-title-col {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 6px !important;
-            width: 100%;
-          }
-          .works-title-col h3 {
-             font-size: 32px !important;
-             transform: none !important;
-             color: #0a0a0a !important;
-          }
-          .works-title-col span {
-             font-size: 14px !important;
-             color: #666 !important;
-             transform: none !important;
-             opacity: 1 !important;
-          }
-          .works-meta-col {
-            grid-column: 2 / -1;
-            justify-content: flex-start !important;
-            gap: 20px !important;
-            margin-top: 24px !important;
-            align-items: center !important;
-          }
-          .tech-icons-container {
-            margin-right: 0 !important;
-            opacity: 1 !important;
-            gap: 12px !important;
-          }
-          .tech-icons-container img {
-            width: 20px !important;
-            height: 20px !important;
-          }
-          .works-meta-col > span {
-            font-size: 14px !important;
-            color: #888 !important;
-          }
-          .works-bottom-bar {
-            padding: 32px 24px !important;
-          }
-          .works-arrow {
-            display: none !important;
-          }
-        }
-        .works-view-all-link:hover {
-          color: #111 !important;
-        }
-        .works-all-link:hover {
-          color: #111 !important;
-        }
-      `}</style>
-    </section >
+            <nav className="city-chips" aria-label="Projects">
+              {projects.map((p, i) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  className={activeKey === p.key ? "is-active" : ""}
+                  style={{ "--accent": p.accent }}
+                  onClick={() => setActiveKey(activeKey === p.key ? null : p.key)}
+                  onMouseEnter={() => setHoverKey(p.key)}
+                  onMouseLeave={() => setHoverKey(null)}
+                >
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {p.title}
+                </button>
+              ))}
+            </nav>
+          </>
+        ) : (
+          <FallbackList />
+        )}
+      </div>
+    </section>
   );
 };
 
