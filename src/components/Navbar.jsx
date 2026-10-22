@@ -6,7 +6,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
-  const [visits, setVisits] = useState(0);
+  const [visits, setVisits] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -15,21 +15,22 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // We use a unique namespace and key for your portfolio
-    const namespace = "umarportfolio";
-    const name = "portfolio_visits";
+    // Count a visit once per browser session; later page loads only read the total.
+    let counted = false;
+    try {
+      counted = sessionStorage.getItem("visit-counted") === "1";
+    } catch { /* storage blocked: count anyway */ }
 
-    fetch(`https://api.counterapi.dev/v1/${namespace}/${name}/up`)
-      .then((res) => res.json())
+    fetch("/api/visits", { method: counted ? "GET" : "POST" })
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && data.count) {
-          setVisits(data.count);
-        }
+        if (typeof data?.count !== "number") return;
+        setVisits(data.count);
+        try {
+          sessionStorage.setItem("visit-counted", "1");
+        } catch { /* ignore */ }
       })
-      .catch((err) => {
-        console.error("Counter API error:", err);
-        setVisits(Math.floor(Math.random() * 500) + 1200); // Fallback
-      });
+      .catch(() => { /* counter stays hidden */ });
   }, []);
 
   const scrollToSection = (id) => {
@@ -86,7 +87,8 @@ const Navbar = () => {
           Umar.
         </button>
 
-        {/* Visitor counter */}
+        {/* Visitor counter (hidden until a real count arrives) */}
+        {visits !== null && (
         <div
           style={{
             display: "flex",
@@ -103,6 +105,7 @@ const Navbar = () => {
             {visits.toLocaleString().padStart(6, '0')}
           </span>
         </div>
+        )}
       </div>
 
       {/* Nav Links */}

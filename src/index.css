@@ -40,15 +40,15 @@ body {
     background-color: black;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    cursor: none;
 }
 
 body::-webkit-scrollbar {
     display: none;
 }
 
-/* Hide default cursor globally on EVERYTHING */
-* {
+/* Hide the system cursor only while CustomCursor is active (real mouse) */
+html.has-custom-cursor,
+html.has-custom-cursor * {
     cursor: none !important;
 }
 

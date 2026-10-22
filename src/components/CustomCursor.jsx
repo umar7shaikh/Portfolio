@@ -1,97 +1,103 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
+const INTERACTIVE = "a, button, [role='button'], input, textarea, select, label, .hover-target";
+
+// Position lives in motion values, so mouse movement never re-renders React.
+// The dot is centred with translate(-50%, -50%) and grows with scale, so the
+// hover state never shifts its position.
 const CustomCursor = () => {
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [isHovering, setIsHovering] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const [enabled, setEnabled] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [hovering, setHovering] = useState(false);
+    const [pressed, setPressed] = useState(false);
+
+    const x = useMotionValue(-100);
+    const y = useMotionValue(-100);
+    const springX = useSpring(x, { stiffness: 1200, damping: 60, mass: 0.3 });
+    const springY = useSpring(y, { stiffness: 1200, damping: 60, mass: 0.3 });
 
     useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth <= 768 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0);
-        };
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-
-        const updateMousePosition = (e) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-        };
-
-        const handleMouseOver = (e) => {
-            const target = e.target;
-            // Check if hovering over interactive elements
-            if (
-                target.tagName.toLowerCase() === "a" ||
-                target.tagName.toLowerCase() === "button" ||
-                target.closest("a") ||
-                target.closest("button") ||
-                target.classList.contains("hover-target")
-            ) {
-                setIsHovering(true);
-            } else {
-                setIsHovering(false);
-            }
-        };
-
-        window.addEventListener("mousemove", updateMousePosition);
-        window.addEventListener("mouseover", handleMouseOver);
-
-        return () => {
-            window.removeEventListener("resize", checkMobile);
-            window.removeEventListener("mousemove", updateMousePosition);
-            window.removeEventListener("mouseover", handleMouseOver);
-        };
+        // Only show it for a real mouse, so touch laptops keep working on touch
+        // and phones never see it.
+        const query = window.matchMedia("(hover: hover) and (pointer: fine)");
+        const update = () => setEnabled(query.matches);
+        update();
+        query.addEventListener("change", update);
+        return () => query.removeEventListener("change", update);
     }, []);
 
-    const variants = {
-        default: {
-            x: mousePosition.x - 8,
-            y: mousePosition.y - 8,
-            width: 16,
-            height: 16,
-            backgroundColor: "#fff",
-            mixBlendMode: "difference",
-            transition: {
-                type: "spring",
-                stiffness: 700,
-                damping: 40,
-                mass: 0.5
+    useEffect(() => {
+        if (!enabled) return;
+        document.documentElement.classList.add("has-custom-cursor");
+
+        let first = true;
+        const onMove = (e) => {
+            if (first) {
+                // Jump straight to the pointer instead of flying in from a corner.
+                springX.jump(e.clientX);
+                springY.jump(e.clientY);
+                first = false;
             }
-        },
-        hover: {
-            x: mousePosition.x - 30,
-            y: mousePosition.y - 30,
-            width: 60,
-            height: 60,
-            backgroundColor: "transparent",
-            border: "2px solid #fff",
-            mixBlendMode: "difference",
-            transition: {
-                type: "spring",
-                stiffness: 400,
-                damping: 30,
-                mass: 0.8
-            }
-        }
-    };
-    if (isMobile) return null;
+            x.set(e.clientX);
+            y.set(e.clientY);
+            setVisible(true);
+        };
+        const onOver = (e) => setHovering(!!e.target.closest?.(INTERACTIVE));
+        const onLeave = () => setVisible(false);
+        const onDown = () => setPressed(true);
+        const onUp = () => setPressed(false);
+        // The 3D work section reports hovers over canvas objects this way.
+        const onCanvasHover = (e) => setHovering(!!e.detail);
+
+        window.addEventListener("cursor-hover", onCanvasHover);
+        window.addEventListener("pointermove", onMove, { passive: true });
+        document.addEventListener("pointerover", onOver, { passive: true });
+        document.documentElement.addEventListener("pointerleave", onLeave);
+        window.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointerup", onUp);
+        return () => {
+            document.documentElement.classList.remove("has-custom-cursor");
+            window.removeEventListener("cursor-hover", onCanvasHover);
+            window.removeEventListener("pointermove", onMove);
+            document.removeEventListener("pointerover", onOver);
+            document.documentElement.removeEventListener("pointerleave", onLeave);
+            window.removeEventListener("pointerdown", onDown);
+            window.removeEventListener("pointerup", onUp);
+        };
+    }, [enabled, x, y, springX, springY]);
+
+    if (!enabled) return null;
+
+    const scale = (hovering ? 3.2 : 1) * (pressed ? 0.8 : 1);
 
     return (
         <motion.div
-            variants={variants}
-            animate={isHovering ? "hover" : "default"}
+            aria-hidden
             style={{
                 position: "fixed",
                 top: 0,
                 left: 0,
-                borderRadius: "50%",
+                x: springX,
+                y: springY,
+                translateX: "-50%",
+                translateY: "-50%",
                 pointerEvents: "none",
                 zIndex: 9999,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                mixBlendMode: "difference",
             }}
-        />
+        >
+            <motion.div
+                animate={{ scale, opacity: visible ? 1 : 0 }}
+                transition={{ type: "tween", duration: 0.18, ease: "easeOut" }}
+                style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: "50%",
+                    background: "#fff",
+                }}
+            />
+        </motion.div>
     );
 };
 
