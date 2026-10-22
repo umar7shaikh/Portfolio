@@ -94,7 +94,7 @@ const Hero = () => {
             marginBottom: "36px",
           }}
         >
-          Portfolio — 2025
+          Senior Architect · Full-Stack &amp; AI · {new Date().getFullYear()}
         </motion.p>
 
         {/* Big name */}
@@ -141,17 +141,17 @@ const Hero = () => {
               maxWidth: "400px",
             }}
           >
-            Building scalable React &amp; Node.js applications for
-            AI-driven products — from healthcare to fintech — with
-            pixel-perfect UIs and rock-solid APIs.
+            I architect and ship production platforms end to end, from
+            multi-tenant ERPs to real-time voice AI, and lead the engineers
+            who build them with me.
           </p>
 
           {/* Stats */}
           <div style={{ display: "flex", gap: "48px" }}>
             {[
-              { value: "2+", label: "Years Experience" },
-              { value: "10+", label: "Projects Shipped" },
-              { value: "3", label: "Internships" },
+              { value: "3+", label: "Years Experience" },
+              { value: "10+", label: "Products Shipped" },
+              { value: "Lead", label: "Architect & Team Lead" },
             ].map((stat) => (
               <div key={stat.label}>
                 <p
@@ -190,7 +190,7 @@ const Hero = () => {
           transition={{ delay: 0.8, duration: 0.5 }}
           style={{ display: "flex", gap: "16px", alignItems: "center" }}
         >
-          {/* Primary — resume */}
+          {/* Primary: resume */}
           <MagneticButton>
             <div
               onClick={handleResumeDownload}
@@ -220,7 +220,7 @@ const Hero = () => {
             </div>
           </MagneticButton>
 
-          {/* Secondary — projects */}
+          {/* Secondary: projects */}
           <MagneticButton>
             <div
               onClick={handleViewProjects}
@@ -268,7 +268,7 @@ const Hero = () => {
       >
         {/* Tech stack */}
         <div style={{ display: "flex", gap: "20px" }}>
-          {["React", "Node.js", "TypeScript", "PostgreSQL", "AWS"].map((t) => (
+          {["React", "TypeScript", "Spring Boot", "Node.js", "PostgreSQL", "LLM Agents"].map((t) => (
             <span
               key={t}
               style={{

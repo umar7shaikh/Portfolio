@@ -1,7 +1,7 @@
 // src/components/AboutMe.jsx
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import umarImage from "../assets/umarportfolio.png";
+import umarImage from "../assets/umarportfolio.webp";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -35,6 +35,11 @@ const AboutMe = () => {
   ];
 
   const experience = [
+    {
+      year: "2026 – Present",
+      role: "Senior Architect, ERP Edge",
+      company: "AI Global Tech Solutions (AIGTS)",
+    },
     {
       year: "2024 – 2025",
       role: "Software Development Engineer Intern",
@@ -200,10 +205,11 @@ const AboutMe = () => {
                 marginBottom: "16px",
               }}
             >
-              My journey into development began with a fascination for how
-              technology can solve real-world problems and transform user
-              experiences. I specialize in building scalable web applications
-              with clean, efficient code — from healthcare to finance.
+              I'm a senior architect and full-stack engineer with 3+ years of
+              shipping production software. At AIGTS I designed ERP Edge from
+              the ground up and lead the team that builds it: a multi-tenant
+              platform running a manufacturer's operations from first sample
+              to final dispatch.
             </p>
             <p
               style={{
@@ -213,9 +219,9 @@ const AboutMe = () => {
                 fontFamily: "'Inter', sans-serif",
               }}
             >
-              When I'm not coding, you'll find me exploring new frameworks,
-              contributing to open-source projects, or diving into AI and
-              machine learning. Continuous learning is the key to growth.
+              I care about the parts that keep software alive after launch:
+              clean data models, safe releases with a tested way back, and AI
+              features that do real work instead of decorating a screen.
             </p>
           </motion.div>
 
@@ -419,7 +425,7 @@ const AboutMe = () => {
             {/* Editorial Metadata */}
             <div style={{ position: "absolute", bottom: -40, left: 0, display: "flex", gap: "24px" }}>
               <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>EDITION.04</span>
-              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>©2026 UMAR.CORP</span>
+              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#333", letterSpacing: "0.2em" }}>©{new Date().getFullYear()} UMAR.CORP</span>
             </div>
           </motion.div>
 

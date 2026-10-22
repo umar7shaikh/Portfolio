@@ -268,7 +268,7 @@ const Contacts = () => {
               marginTop: "48px",
             }}
           >
-            © 2025 Muhammed Umar. All rights reserved.
+            © {new Date().getFullYear()} Muhammed Umar. All rights reserved.
           </motion.p>
         </div>
 

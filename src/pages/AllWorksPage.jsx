@@ -1,126 +1,25 @@
 // src/pages/AllWorksPage.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
-import MedBotInteractiveDemo from "../components/MedBotInteractiveDemo.jsx";
-import FinancialAnalyzerDemo from "../components/FinancialAnalyzerDemo.jsx";
-import DevStackCLIDemo from "../components/DevStackCLIDemo.jsx";
-import MotoriqDemo from "../components/MotoriqDemo.jsx";
-import PravakDemo from "../components/PravakDemo/index.tsx";
-import GadgetBazaarDemo from "../components/GadgetBazaarDemo/index.tsx";
-import MotoriqMobile from "../components/mobile/MotoriqMobile.jsx";
-import PravakMobile from "../components/mobile/PravakMobile.jsx";
-import GadgetBazaarMobile from "../components/mobile/GadgetBazaarMobile.jsx";
-import useIsMobile from "../components/useIsMobile.js";
 import SmoothImage from "../components/SmoothImage.jsx";
+import { projects } from "../data/projects.js";
 
-import medbot1 from "../assets/medbot1.png";
-import financeImg from "../assets/finance.png";
-import franccoImg from "../assets/francco.png";
-import franzcoScrollImg from "../assets/screencapture-franzco.jpg";
-import cliImg from "../assets/cli.png";
-import theLaddersImg from "../assets/screencapture-theladders-tech.png";
-import motoriqCover from "../assets/motoriq-cover.svg";
-import pravakCover from "../assets/pravak-cover.svg";
-import gadgetbazaarCover from "../assets/gadgetbazaar-cover.svg";
+// Each demo is its own chunk, fetched when its project is expanded.
+const DEMOS = {
+  9: lazy(() => import("../components/demos/ErpEdgeDemo.jsx")),
+  6: lazy(() => import("../components/demos/MotoriqDemo.jsx")),
+  7: lazy(() => import("../components/demos/PravakDemo.jsx")),
+  1: lazy(() => import("../components/demos/MedBotDemo.jsx")),
+};
 
-const projectsData = [
-  {
-    id: 6,
-    title: "Motoriq.in",
-    client: "Motoriq (motoriq.in)",
-    year: "2025",
-    services: ["Spring Boot", "React 19 PWA", "Multi-tenant SaaS"],
-    description: "Architected and built a multi-tenant SaaS that runs the day-to-day operations of Indian vehicle dealerships — inventory, sales, CRM, expenses and staff, each dealership fully isolated. The Spring Boot backend enforces strict tenant isolation and role-based access (Super Admin / Admin / Staff) over JWT, while the React 19 PWA delivers an installable, offline-capable dashboard with 360° vehicle viewers, QR vehicle profiles and AI-generated listings. Ships India-specific compliance including the GST Margin Scheme and RTO-ready invoices.",
-    image: motoriqCover,
-    isInteractiveDemo: true,
-    link: "https://motoriq.in"
-  },
-  {
-    id: 7,
-    title: "Pravak AI",
-    client: "Pravak AI",
-    year: "2025",
-    services: ["Voice AI", "Real-time Telephony", "LLM Agents"],
-    description: "Designed Pravak AI, an autonomous voice agent that answers and places phone calls in natural, human-like conversation — handling appointment booking, lead qualification and customer support around the clock. The pipeline streams low-latency speech-to-text into an LLM reasoning layer with business-aware context, then expressive text-to-speech, and takes real actions like reserving slots and sending confirmations. Built to never miss a call and to hand off cleanly to a human whenever needed.",
-    image: pravakCover,
-    isInteractiveDemo: true,
-    comingSoon: true,
-    previewLink: "https://call-agent-frontend.pages.dev/"
-  },
-  {
-    id: 8,
-    title: "GadgetBazaar",
-    client: "GadgetBazaar",
-    year: "2025",
-    services: ["Next.js 16", "Supabase", "Razorpay"],
-    description: "Built a complete production e-commerce store for mobile and electronics accessories — earbuds, covers, chargers, power banks and more. The Next.js 16 storefront serves SEO-friendly server-rendered product pages with search, filtering, wishlist and cart, backed by Razorpay/UPI payments, Cash-on-Delivery and automated Shiprocket fulfilment. A full admin panel manages products, orders and a dynamic blog, all on Supabase (Postgres + storage).",
-    image: gadgetbazaarCover,
-    isInteractiveDemo: true,
-    link: "https://ecommerce-omega-nine-38.vercel.app/"
-  },
-  {
-    id: 1,
-    title: "MedBot",
-    client: "Personal Project",
-    year: "2024",
-    services: ["MERN Stack", "AI Integration", "Voice Features"],
-    description: "Developed a smart healthcare app that seamlessly integrates AI-powered medical assistance with voice recognition. The project involved building a secure MERN stack application with JWT authentication, role-based access control, and a responsive patient-clinician interface. Integrated Llama 4 Maverick with Whisper STT and ElevenLabs TTS for real-time voice-based medical queries, allowing users to interact naturally with the AI assistant.",
-    image: medbot1,
-    isInteractiveDemo: true,
-    link: "https://ai-medbot.vercel.app/"
-  },
-  {
-    id: 2,
-    title: "Financial Analyzer",
-    client: "FinTech Solutions",
-    year: "2024",
-    services: ["React", "FastAPI", "AI Agents"],
-    description: "Built a production-ready financial analysis system with background processing, multi-user support, and responsive React interface. The platform features advanced document processing capabilities, real-time analysis, and AI-powered investment recommendations using CrewAI multi-agent system for comprehensive market research.",
-    image: financeImg,
-    isInteractiveDemo: true,
-    link: "https://financial-analyzer-frontend.onrender.com/"
-  },
-  {
-    id: 5,
-    title: "TheLadders.tech",
-    client: "TheLadders.tech",
-    year: "2024",
-    services: ["Technical & Marketing", "Portfolio", "Dynamic Blog System"],
-    description: "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
-    image: theLaddersImg,
-    scrollableImage: theLaddersImg,
-    link: "https://theladders.tech"
-  },
-  {
-    id: 4,
-    title: "DevStack CLI",
-    client: "Open Source",
-    year: "2024",
-    services: ["Node.js", "CLI Development", "NPM"],
-    description: "Created an automated project scaffolding tool that reduces development setup time by 75%. Executed a powerful template engine with customizable boilerplates for 10+ different frameworks including React, Vue, Angular, and Node.js. Published as an NPM package with comprehensive documentation.",
-    image: cliImg,
-    isInteractiveDemo: true,
-    link: "https://github.com/umar7shaikh/devstack-cli"
-  },
-  {
-    id: 3,
-    title: "Franz Co",
-    client: "Franz Corporation",
-    year: "2024",
-    services: ["React.js", "SEO Optimization", "Performance Tuning"],
-    description: "Architected a high-performance corporate website supporting 10,000+ monthly visitors with modern UI/UX design. Launched a dynamic content management system with API-driven content reducing update time by 70%. Achieved 95+ Google PageSpeed score through advanced optimization techniques, improving conversion rate by 25%.",
-    image: franccoImg,
-    scrollableImage: franzcoScrollImg,
-    link: "https://franzco.vercel.app/"
-  }
-];
+
+const projectsData = projects;
 
 const AllWorksPage = () => {
   const [searchParams] = useSearchParams();
   const projectIdFromUrl = searchParams.get("project");
-  const isMobile = useIsMobile();
 
   // Set initial expanded project from URL or default to first project
   const [expandedProject, setExpandedProject] = useState(
@@ -238,20 +137,10 @@ const AllWorksPage = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 py-12">
                         {/* Image Column */}
                         <div className="lg:col-span-7">
-                          {project.isInteractiveDemo ? (
-                            project.id === 1 ? (
-                              <MedBotInteractiveDemo />
-                            ) : project.id === 2 ? (
-                              <FinancialAnalyzerDemo />
-                            ) : project.id === 4 ? (
-                              <DevStackCLIDemo />
-                            ) : project.id === 6 ? (
-                              isMobile ? <MotoriqMobile /> : <MotoriqDemo />
-                            ) : project.id === 7 ? (
-                              isMobile ? <PravakMobile /> : <PravakDemo />
-                            ) : project.id === 8 ? (
-                              isMobile ? <GadgetBazaarMobile /> : <GadgetBazaarDemo />
-                            ) : null
+                          {DEMOS[project.id] ? (
+                            <Suspense fallback={<div className="aspect-[16/11] rounded-xl border border-gray-800 bg-[#111318]" />}>
+                              {React.createElement(DEMOS[project.id])}
+                            </Suspense>
                           ) : (
                             <motion.div
                               initial={{ scale: 0.95, opacity: 0 }}

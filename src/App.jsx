@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Lenis from '@studio-freight/lenis';
 import Homepage from './pages/Homepage';
-import AllWorksPage from './pages/AllWorksPage';
+const AllWorksPage = lazy(() => import('./pages/AllWorksPage'));
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 
@@ -69,7 +69,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/works" element={<AllWorksPage />} />
+            <Route path="/works" element={<Suspense fallback={<div style={{ minHeight: '100vh', background: '#0a0a0a' }} />}><AllWorksPage /></Suspense>} />
           </Routes>
         </BrowserRouter>
       </div>

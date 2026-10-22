@@ -6,7 +6,7 @@ const SmoothImage = ({ src, thumbnailSrc, alt, wrapperClassName, className, styl
     const imgRef = useRef(null);
 
     // In production, images served from cache fire `load` before React attaches
-    // the onLoad handler — so the opacity stays at 0 forever. Checking
+    // the onLoad handler, so the opacity stays at 0 forever. Checking
     // img.complete after mount catches those already-loaded images.
     useEffect(() => {
         if (imgRef.current && imgRef.current.complete) {
