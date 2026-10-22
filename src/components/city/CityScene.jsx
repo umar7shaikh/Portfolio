@@ -7,6 +7,7 @@ import { EffectComposer, Bloom, ToneMapping } from "@react-three/postprocessing"
 import { ToneMappingMode } from "postprocessing";
 import { projects } from "../../data/projects.js";
 import { VEHICLES_URL, createVehicleFactory, parseSlot } from "./vehicles.js";
+import { createLiving } from "./living.js";
 
 export const MODEL_URL = "/models/city.glb";
 
@@ -96,15 +97,6 @@ function ownMaterials(obj) {
   return out;
 }
 
-// Two vehicles circling the ring road: [model, paint, lane radius, speed (rad/s)].
-// Each has its own lane, 0.8 apart. The widest car is about 0.92 across, so
-// two half-widths (0.46 + 0.35) fit between lane centres and they never touch.
-const TRAFFIC = [
-  ["auto", "#f5c518", 13.45, 0.11],
-  ["hatchback", "#e0e4ea", 14.25, -0.085],
-];
-const ROAD_Y = 0.025;
-
 function useCity(lowPower) {
   const { scene } = useGLTF(MODEL_URL, false, true);
   const { scene: vehiclesScene } = useGLTF(VEHICLES_URL, false, true);
@@ -143,14 +135,6 @@ function useCity(lowPower) {
     }
     root.updateMatrixWorld(true);
 
-    const traffic = new THREE.Group();
-    const drivers = TRAFFIC.map(([model, hex, r, speed], i) => {
-      const v = makeVehicle(model, hex, { shadows: false });
-      if (!v) return null;
-      traffic.add(v);
-      return { v, r, speed, a: i * Math.PI };
-    }).filter(Boolean);
-
     const buildings = {};
     for (const p of projects) {
       const node = get(`B_${p.key}`);
@@ -187,9 +171,17 @@ function useCity(lowPower) {
     noShadow(turntableNode);
 
     const core = pivot(coreNode);
-    const anim = {
+    // Vehicles with jobs, the Sky Port and the ERP line live in living.js.
+    const movers = new THREE.Group();
+    const living = createLiving({
+      buildings,
+      makeVehicle,
+      movers,
       crates: crates.map(pivot),
       qcMat: qc ? ownMaterials(qc)[0] : null,
+    });
+    const anim = {
+      living,
       turntable: pivot(turntableNode),
       rings: ringNodes.map(pivot),
       ringMats,
@@ -199,9 +191,8 @@ function useCity(lowPower) {
       sirenB: get("med_siren_b") ? ownMaterials(get("med_siren_b"))[0] : null,
       floats: floatNodes.map((o, i) => ({ o: pivot(o), s: i * 1.9 })),
       core,
-      drivers,
     };
-    return { root, buildings, anim, traffic };
+    return { root, buildings, anim, movers };
   }, [scene, vehiclesScene, gl, lowPower]);
 }
 
@@ -210,44 +201,35 @@ const heartbeat = (t) => {
   return Math.exp(-(((p - 0.08) / 0.045) ** 2)) + 0.65 * Math.exp(-(((p - 0.28) / 0.045) ** 2));
 };
 
+// How strongly a building is still reacting to its last event (1 fading to 0).
+const afterglow = (now, at, len) => Math.max(0, 1 - (now - at) / len);
+
 function Animator({ anim, reduced }) {
+  const phase = useRef({ rings: 0 });
   useFrame((state, dt) => {
     const t = state.clock.elapsedTime;
     const speed = reduced ? 0.25 : 1;
-
-    // ERP Edge: crates ride the line and trip the QC scanner as they pass.
-    const span = 6.6;
-    let nearQc = 1;
-    anim.crates.forEach((c, i) => {
-      const x = -3.3 + ((t * 0.55 * speed + i * (span / anim.crates.length)) % span);
-      c.position.x = x; // pivot sits in the building frame, same as the belt
-      const edge = Math.min((x + 3.3) / 0.45, (3.3 - x) / 0.45, 1);
-      c.scale.setScalar(Math.max(edge, 0.001));
-      nearQc = Math.min(nearQc, Math.abs(x - 0.6));
-    });
-    if (anim.qcMat) anim.qcMat.emissiveIntensity = nearQc < 0.22 ? 12 : 2.2;
+    const { living } = anim;
+    living.update(dt * speed);
+    const now = living.now();
+    const { fx } = living;
 
     if (anim.turntable) anim.turntable.rotation.y += dt * 0.45 * speed;
 
-    // Ring-road traffic. A model's nose points along +X, so face the tangent.
-    anim.drivers.forEach((d) => {
-      d.a += dt * d.speed * speed;
-      const x = Math.cos(d.a) * d.r;
-      const z = Math.sin(d.a) * d.r;
-      const dir = Math.sign(d.speed);
-      d.v.position.set(x, ROAD_Y, z);
-      d.v.rotation.y = -Math.atan2(Math.cos(d.a) * dir, -Math.sin(d.a) * dir);
-    });
-
+    // Pravak: the rings race while a call is live.
+    const call = afterglow(now, fx.call, 3);
+    phase.current.rings += dt * speed * 0.42 * (1 + call * 2.2);
     anim.rings.forEach((r, i) => {
-      const ph = (t * 0.42 * speed + i / anim.rings.length) % 1;
+      const ph = (phase.current.rings + i / anim.rings.length) % 1;
       r.scale.setScalar(0.35 + ph * 4.2);
-      anim.ringMats[i].opacity = Math.pow(1 - ph, 1.6);
+      anim.ringMats[i].opacity = Math.pow(1 - ph, 1.6) * (0.75 + call * 0.25);
     });
 
+    // Beacons flash on a read (TheLadders) or a call (Pravak), the heart on a consult.
     const blink = Math.pow(Math.max(0, Math.sin(t * 2.2)), 10);
-    anim.beaconMats.forEach((m) => { m.emissiveIntensity = 1.5 + blink * 14; });
-    if (anim.heartMat) anim.heartMat.emissiveIntensity = 2.5 + heartbeat(t) * 11;
+    const read = afterglow(now, fx.read, 0.8);
+    anim.beaconMats.forEach((m, i) => { m.emissiveIntensity = 1.5 + Math.max(blink, i === 0 ? call : read) * 14; });
+    if (anim.heartMat) anim.heartMat.emissiveIntensity = 2.5 + (heartbeat(t) * (1 + afterglow(now, fx.consult, 2.5) * 1.4)) * 11;
     if (anim.sirenR) {
       const on = Math.sin(t * 9) > 0;
       anim.sirenR.emissiveIntensity = on ? 12 : 0.4;
@@ -323,6 +305,11 @@ function Rig({ buildings, activeKey, reduced, interactive, panelOpen }) {
       busy.current = false;
       lastInput.current = performance.now() / 1000;
     });
+    // Orbiting (by hand or the idle drift) winds the azimuth up by whole turns,
+    // while setLookAt aims within one turn, so the move would unwind every
+    // extra lap. Bring the current angle within half a turn of the goal first:
+    // the camera always takes the short way round.
+    c.normalizeRotations();
     // Keep the subject clear of the overlays: the intro copy on the left in the
     // overview, the details panel on the right when a building is open.
     const wide = !isPortrait && size.width > 900;
@@ -383,8 +370,8 @@ function Labels({ buildings, activeKey, hoverKey, onSelect, onHover }) {
 }
 
 function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, interactive, panelOpen, onReady }) {
-  const { root, buildings, anim, traffic } = useCity(lowPower);
-  const { gl } = useThree();
+  const { root, buildings, anim, movers } = useCity(lowPower);
+  const { gl, camera } = useThree();
   const readyFired = useRef(false);
 
   useFrame(() => {
@@ -392,6 +379,13 @@ function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, inte
     readyFired.current = true;
     onReady?.();
   });
+
+  // Dev only: lets a browser test fast-forward the simulation and watch the camera.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    window.__living = anim.living;
+    window.__camera = camera;
+  }, [anim, camera]);
 
   // The world is static apart from small animated props that don't cast
   // shadows, so the shadow map is rendered once instead of every frame.
@@ -435,7 +429,7 @@ function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, inte
       <group onPointerMove={pointerMove} onClick={click}>
         {Object.values(buildings).flatMap((b) => b.hits).map((h) => <primitive key={h.uuid} object={h} />)}
       </group>
-      <primitive object={traffic} />
+      <primitive object={movers} onPointerMove={pointerMove} onClick={click} />
       <Animator anim={anim} reduced={reduced} />
       <FocusRing building={active || hovered} color={accent} />
       <Labels buildings={buildings} activeKey={activeKey} hoverKey={hoverKey} onSelect={onSelect} onHover={onHover} />

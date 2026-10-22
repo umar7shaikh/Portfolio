@@ -1,10 +1,11 @@
 // src/components/Work.jsx
 // Selected work as an explorable 3D island: every project is a building.
 // The scene itself is lazy loaded so three.js never blocks the first paint.
-import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { projects } from "../data/projects.js";
+import { economy, METRICS, BUILDING_METRICS } from "./city/economy.js";
 import "./city/city.css";
 
 const CityScene = lazy(() => import("./city/CityScene.jsx"));
@@ -46,6 +47,61 @@ function Loader({ active }) {
   );
 }
 
+// The live board and the per-project counts are off for now: simulated totals
+// read as real traffic, and the real volume is nowhere near that. Flip this to
+// bring them back.
+const SHOW_LIVE_COUNTS = false;
+
+const useEconomy = () => useSyncExternalStore(economy.subscribe, economy.getSnapshot);
+const LABEL = Object.fromEntries(METRICS.map(([k, label]) => [k, label]));
+const fmt = (n) => n.toLocaleString("en-IN");
+
+// Live board for the whole island: what every building has done today.
+function IslandBoard() {
+  const counts = useEconomy();
+  const last = economy.getLast();
+  return (
+    <motion.div
+      className="city-board"
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.5 }}
+      aria-hidden="true"
+    >
+      <p className="city-board-kicker"><span className="city-live" />Live · today on the island</p>
+      <ul>
+        {METRICS.map(([k, label]) => (
+          <li key={k}>
+            <strong key={counts[k]}>{fmt(counts[k])}</strong>
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+      {last && <p key={last.at} className="city-board-last">{last.text}</p>}
+      <p className="city-board-note">Simulated in real time</p>
+    </motion.div>
+  );
+}
+
+function PanelLive({ projectKey }) {
+  const counts = useEconomy();
+  const keys = BUILDING_METRICS[projectKey] || [];
+  if (!keys.length) return null;
+  return (
+    <p className="city-panel-live">
+      <span className="city-live" />
+      {keys.map((k, i) => (
+        <React.Fragment key={k}>
+          {i > 0 && " · "}
+          <strong key={counts[k]}>{fmt(counts[k])}</strong> {LABEL[k]}
+        </React.Fragment>
+      ))}
+      <em> today</em>
+    </p>
+  );
+}
+
 function Panel({ project, index, onClose, onStep }) {
   const navigate = useNavigate();
   return (
@@ -72,6 +128,7 @@ function Panel({ project, index, onClose, onStep }) {
       <h3 className="city-panel-title">{project.title}</h3>
       <p className="city-panel-role"><span className="city-dot" />{project.role}</p>
       <p className="city-panel-summary">{project.summary}</p>
+      {SHOW_LIVE_COUNTS && <PanelLive projectKey={project.key} />}
 
       <ul className="city-panel-list">
         {project.highlights.map((h) => <li key={h}>{h}</li>)}
@@ -204,14 +261,18 @@ const Works = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <p className="city-intro-kicker">{String(projects.length).padStart(2, "0")} projects · one island</p>
-                  <h2 className="city-intro-title">Every building<br />is something I shipped.</h2>
+                  <p className="city-intro-kicker">{String(projects.length).padStart(2, "0")} projects · one living island</p>
+                  <h2 className="city-intro-title">This island runs<br />on software I wrote.</h2>
                   <p className="city-intro-hint">
+                    Every building is a system I shipped, doing its job right now.
+                    <br />
                     {touch ? "Tap a building or a name below" : "Drag to orbit · click a building to step inside"}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <AnimatePresence>{SHOW_LIVE_COUNTS && !active && ready && <IslandBoard />}</AnimatePresence>
 
             <AnimatePresence mode="wait">
               {active && (

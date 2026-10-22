@@ -5,6 +5,10 @@ import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import SmoothImage from "../components/SmoothImage.jsx";
 import { projects } from "../data/projects.js";
+import theLaddersImg from "../assets/screencapture-theladders-tech.webp";
+
+// Screenshots by project key; projects.js stays plain data.
+const SHOTS = { ladders: theLaddersImg };
 
 // Each demo is its own chunk, fetched when its project is expanded.
 const DEMOS = {
@@ -156,8 +160,8 @@ const AllWorksPage = () => {
                               className="relative aspect-[4/3] md:aspect-video rounded-lg overflow-hidden border border-gray-800 group"
                             >
                               <SmoothImage
-                                src={project.scrollableImage || project.image}
-                                thumbnailSrc={project.image}
+                                src={SHOTS[project.key]}
+                                thumbnailSrc={SHOTS[project.key]}
                                 alt={project.title}
                                 className={`w-full h-full object-cover grayscale group-hover:grayscale-0 portfolio-img ${project.scrollableImage
                                   ? 'object-top group-hover:object-bottom portfolio-img-scroll'

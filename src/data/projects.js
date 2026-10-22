@@ -1,6 +1,7 @@
 // Single source of truth for the projects, shared by the 3D city on the home
-// page and the detailed /works page. `key` names the building in city.glb.
-import theLaddersImg from "../assets/screencapture-theladders-tech.webp";
+// page, the detailed /works page and the voice agent in api/talk.js. Keep it
+// plain data (no asset imports) so the serverless function can load it too.
+// `key` names the building in city.glb.
 
 export const projects = [
   {
@@ -111,8 +112,7 @@ export const projects = [
     ],
     description:
       "Developed a comprehensive website featuring dedicated sections for both Technical and Marketing departments. The platform includes a full-featured portfolio to showcase completed works and a bespoke dynamic blog handling system, empowering the team with an easy-to-manage content architecture.",
-    image: theLaddersImg,
-    scrollableImage: theLaddersImg,
+    scrollableImage: true,
     link: "https://theladders.tech",
   },
 ];
