@@ -29,11 +29,18 @@ const AllWorksPage = () => {
   // Refs for detail sections
   const detailRefs = useRef({});
 
-  // Handle URL parameter changes and scroll to project
+  // Open the project named in the URL whenever it changes (state adjusted
+  // during render rather than in an effect, per the React docs).
+  const [urlProject, setUrlProject] = useState(projectIdFromUrl);
+  if (projectIdFromUrl !== urlProject) {
+    setUrlProject(projectIdFromUrl);
+    if (projectIdFromUrl) setExpandedProject(parseInt(projectIdFromUrl));
+  }
+
+  // Scroll to the project from the URL
   useEffect(() => {
     if (projectIdFromUrl) {
       const projectId = parseInt(projectIdFromUrl);
-      setExpandedProject(projectId);
 
       // Scroll to the specific project after a short delay
       setTimeout(() => {

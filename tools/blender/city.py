@@ -89,11 +89,7 @@ M = {
     "leaf3": mat("leaf_teal", "#2f6f63", 0.9),
     "cardboard": mat("cardboard", "#b98a5a", 0.9),
     "tape": mat("tape", "#d9c39a", 0.7),
-    "tyre": mat("tyre", "#121314", 0.8),
     "white": mat("paint_white", "#f2f2f0", 0.35, 0.1),
-    "car_red": mat("car_red", "#d8333f", 0.25, 0.6),
-    "car_blue": mat("car_blue", "#1e3a8a", 0.3, 0.6),
-    "car_glass": mat("car_glass", "#0d1118", 0.1, 0.3),
     "fabric_r": mat("fabric_red", "#c73a52", 0.95),
     "fabric_b": mat("fabric_blue", "#3466c2", 0.95),
     "fabric_y": mat("fabric_yellow", "#d8b23e", 0.95),
@@ -111,8 +107,6 @@ M = {
     "pulse": mat("pulse_green", "#34d399", 0.5, emit="#34d399", strength=7.0),
     "red_light": mat("red_light", "#ef4444", 0.5, emit="#ff3030", strength=8.0),
     "blue_light": mat("blue_light", "#3b82f6", 0.5, emit="#3b82f6", strength=8.0),
-    "head": mat("headlight", "#ffffff", 0.3, emit="#fff6e0", strength=6.0),
-    "tail": mat("taillight", "#ff2a2a", 0.3, emit="#ff2020", strength=4.0),
     "water": mat("water", "#1b6f86", 0.1, emit="#2ec5e8", strength=0.9),
     "core": mat("core", "#ffffff", 0.2, emit="#e8f1ff", strength=6.0),
     "spot": mat("spot", "#ffffff", 0.3, emit="#ffffff", strength=4.0),
@@ -271,25 +265,18 @@ def origin_to(o, point):
 
 # ------------------------------------------------------------------ props
 
-def car(loc, body_m, rot_z=0.0, scale=1.0):
-    """Low-poly sports car centred on loc, nose towards +X before rotation."""
-    s = scale
-    x, y, z = loc
-    p = []
-    p.append(box((2.1 * s, 0.92 * s, 0.32 * s), (x, y, z + 0.32 * s), body_m, bevel=0.06 * s))
-    p.append(taper_box((1.15 * s, 0.82 * s, 0.32 * s), (x - 0.12 * s, y, z + 0.63 * s), M["car_glass"], top=(0.62, 0.82), shift=-0.08 * s))
-    p.append(box((0.5 * s, 0.84 * s, 0.03 * s), (x - 0.16 * s, y, z + 0.8 * s), body_m))
-    for wx in (-0.68, 0.68):
-        for wy in (-0.43, 0.43):
-            p.append(cyl(0.2 * s, 0.16 * s, (x + wx * s, y + wy * s, z + 0.2 * s), M["tyre"], verts=14, rot=(math.pi / 2, 0, 0)))
-            p.append(cyl(0.11 * s, 0.17 * s, (x + wx * s, y + wy * s, z + 0.2 * s), M["steel"], verts=10, rot=(math.pi / 2, 0, 0)))
-    for wy in (-0.3, 0.3):
-        p.append(box((0.04 * s, 0.22 * s, 0.07 * s), (x + 1.06 * s, y + wy * s, z + 0.38 * s), M["head"]))
-        p.append(box((0.04 * s, 0.26 * s, 0.06 * s), (x - 1.06 * s, y + wy * s, z + 0.4 * s), M["tail"]))
-    o = join(p, "car")
-    origin_to(o, (x, y, z))
-    o.rotation_euler = (0, 0, rot_z)
-    return o
+def slot(model, paint, loc, rot_deg=0.0, parent=None):
+    """Placement marker for a vehicle from the Motoriq lot (public/models/vehicles.glb).
+    The web scene reads model and paint from the name: slot_<model>_<rrggbb>."""
+    e = bpy.data.objects.new(f"slot_{model}_{paint}", None)
+    bpy.context.collection.objects.link(e)
+    e.location = loc
+    e.rotation_euler = (0, 0, math.radians(rot_deg))
+    if parent is not None:
+        bpy.context.view_layer.update()
+        e.parent = parent
+        e.matrix_parent_inverse = parent.matrix_world.inverted()
+    return e
 
 
 def pine(loc, h=1.0, m=None):
@@ -396,7 +383,7 @@ def b_erp():
             cyl(0.18, 0.9, (-3.0 + i * 0.38 + row * 0.19, 2.75, G + 0.18 + row * 0.32), cols[k % len(cols)], verts=10, rot=(math.pi / 2, 0, 0))
             k += 1
     # dispatch pallets at the end of the line
-    for i, (px, py) in enumerate(((3.25, 2.7), (2.4, 2.75))):
+    for i, (px, py) in enumerate(((2.1, 2.75), (1.25, 2.75))):
         box((0.75, 0.75, 0.12), (px, py, G + 0.06), M["pallet"])
         for j in range(3 if i == 0 else 2):
             box((0.32, 0.32, 0.26), (px - 0.17 + (j % 2) * 0.34, py + (-0.17 if j < 2 else 0.17), G + 0.27), M["cardboard"])
@@ -416,7 +403,9 @@ def b_erp():
         crates.append(o)
     box((0.08, 0.84, 0.05), (qx, cy, G + 1.22), M["qc"])
     qc = join(take(), "erp_qc_light")
-    return static, crates + [qc]
+    # dispatch truck backed up to the pallets, nose out
+    truck = slot("mini_truck", "e8e6df", (3.05, 3.2, G), 90)
+    return static, crates + [qc, truck]
 
 
 def b_motoriq():
@@ -450,9 +439,6 @@ def b_motoriq():
     # pylon sign
     box((0.4, 0.16, 2.4), (-2.85, 2.3, G + 1.2), M["dark"], bevel=0.03)
     box((0.3, 0.02, 1.9), (-2.85, 2.39, G + 1.3), M["indigo"])
-    # parked car outside + lamps
-    parked = car((1.5, 2.25, G), M["car_blue"], rot_z=math.radians(8), scale=0.9)
-    PARTS.append(parked)
     lamp((3.0, 1.2, G))
     lamp((-3.0, -2.8, G))
     bush((3.0, -2.9, G), 0.3)
@@ -462,16 +448,13 @@ def b_motoriq():
     torus(1.35, 0.03, (0, by, fz + 0.1), M["indigo"], seg=40, mseg=4)
     tt = join(take(), "miq_turntable")
     origin_to(tt, (0, by, fz + 0.1))
-    c = car((0, by, fz + 0.11), M["car_red"], rot_z=0.0, scale=1.05)
-    c.name = "miq_car"
-    bpy.context.view_layer.update()
-    c.parent = tt
-    c.matrix_parent_inverse = tt.matrix_world.inverted()
+    show = slot("coupe", "d8333f", (0, by, fz + 0.11), 0, parent=tt)
+    parked = [slot("hatchback", "2f5bd3", (1.45, 2.25, G), 8), slot("sedan", "e6e8ec", (-1.0, 2.2, G), -5)]
     # transparent glass last so it sorts after the interior
     gl = box((5.0, 3.8, H), (0, by, fz + H / 2), M["glass"])
     PARTS.remove(gl)
     gl.name = "miq_glass"
-    return static, [tt, gl]
+    return static, [tt, gl, show] + parked
 
 
 def b_pravak():
@@ -583,15 +566,8 @@ def b_medbot():
     # rooftop AC units
     for x in (-1.5, 1.6):
         box((0.6, 0.5, 0.35), (x, -1.8, G + H + 0.28), M["steel"])
-    # ambulance
+    # ambulance: the lot's van, white, with a light bar
     ax, ay = 1.7, 2.3
-    box((1.5, 0.75, 0.75), (ax - 0.15, ay, G + 0.55), M["white"], bevel=0.04)
-    box((0.55, 0.72, 0.5), (ax + 0.85, ay, G + 0.42), M["white"], bevel=0.04)
-    box((0.04, 0.6, 0.25), (ax + 1.12, ay, G + 0.55), M["car_glass"])
-    box((1.52, 0.77, 0.09), (ax - 0.15, ay, G + 0.5), M["car_red"])
-    for wx in (-0.5, 0.75):
-        for wy in (-0.36, 0.36):
-            cyl(0.15, 0.1, (ax + wx, ay + wy, G + 0.15), M["tyre"], verts=12, rot=(math.pi / 2, 0, 0))
     lamp((-3.1, 1.4, G))
     round_tree((-2.6, 2.6, G), 0.9)
     round_tree((3.0, -2.6, G), 0.8)
@@ -607,11 +583,13 @@ def b_medbot():
             ico(0.035, (x2, py, sz + z2), M["pulse"], sub=1)
     heart = join(take(), "med_heart")
     origin_to(heart, (0, -0.3, sz))
-    box((0.16, 0.12, 0.08), (ax - 0.3, ay - 0.15, G + 0.97), M["red_light"])
+    roof = G + 0.83
+    box((0.16, 0.12, 0.07), (ax - 0.1, ay - 0.13, roof), M["red_light"])
     sr = join(take(), "med_siren_r")
-    box((0.16, 0.12, 0.08), (ax - 0.3, ay + 0.15, G + 0.97), M["blue_light"])
+    box((0.16, 0.12, 0.07), (ax - 0.1, ay + 0.13, roof), M["blue_light"])
     sb = join(take(), "med_siren_b")
-    return static, [heart, sr, sb]
+    van = slot("van", "f4f5f2", (ax, ay, G), 0)
+    return static, [heart, sr, sb, van]
 
 
 def b_ladders():
@@ -650,10 +628,11 @@ def b_ladders():
     pine((2.6, -2.7, G), 0.9)
     static = take()
 
+    cars = [slot("sedan", "9aa3ad", (-1.55, 2.78, G), 0), slot("hatchback", "f2b33d", (1.6, 2.78, G), 180)]
     ico(0.09, (0.6, 0.35, top + 1.45), M["red_light"], sub=1)
     beacon = join(take(), "lad_beacon")
     origin_to(beacon, (0.6, 0.35, top + 1.45))
-    return static, [beacon]
+    return static, [beacon] + cars
 
 
 # ------------------------------------------------------------------ island
@@ -700,6 +679,26 @@ BUILDINGS = [
     ("medbot", 126, b_medbot),
     ("ladders", 198, b_ladders),
 ]
+
+
+def annulus(r0, r1, z, m, n=64):
+    """Flat ring road around the island."""
+    verts, faces = [], []
+    for i in range(n):
+        a = i / n * math.tau
+        verts += [(math.cos(a) * r0, math.sin(a) * r0, z), (math.cos(a) * r1, math.sin(a) * r1, z)]
+    for i in range(n):
+        j = (i + 1) % n
+        faces.append([2 * i, 2 * i + 1, 2 * j + 1, 2 * j])
+    o = poly_mesh("road", verts, faces, m)
+    # recalc_face_normals has no inside/outside to go by on a flat open ring
+    if o.data.polygons[0].normal.z < 0:
+        o.data.flip_normals()
+    # dashed centre line
+    for i in range(0, n, 2):
+        a = (i + 0.5) / n * math.tau
+        box((0.06, 0.32, 0.01), (math.cos(a) * (r0 + r1) / 2, math.sin(a) * (r0 + r1) / 2, z + 0.006), M["stone"], rot=(0, 0, a))
+    return o
 
 
 def island():
@@ -757,7 +756,7 @@ def island():
             p = d * (r0 + (r1 - r0) * t) + side * 0.9
             lamp((p.x, p.y, 0.0), 1.3)
     # outer ring path
-    torus(12.9, 0.35, (0, 0, -0.27), M["stone2"], seg=72, mseg=4)
+    annulus(12.4, 13.4, 0.02, M["asphalt"], 120)
     # scatter trees, bushes and rocks, keeping clear of plots and paths
     plots = [V((math.cos(math.radians(d)) * R_BUILD, math.sin(math.radians(d)) * R_BUILD, 0)) for _, d, _ in BUILDINGS]
     placed = []

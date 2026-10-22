@@ -1,18 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SmoothImage = ({ src, thumbnailSrc, alt, wrapperClassName, className, style, ...props }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const imgRef = useRef(null);
+    // Track which src has loaded, so a new src starts hidden again.
+    const [loadedSrc, setLoadedSrc] = useState(null);
+    const isLoaded = loadedSrc === src;
+    const setIsLoaded = useCallback(() => setLoadedSrc(src), [src]);
 
     // In production, images served from cache fire `load` before React attaches
     // the onLoad handler, so the opacity stays at 0 forever. Checking
-    // img.complete after mount catches those already-loaded images.
-    useEffect(() => {
-        if (imgRef.current && imgRef.current.complete) {
-            setIsLoaded(true);
-        }
-    }, [src]);
+    // img.complete when the element mounts catches those already-loaded images.
+    const imgRef = useCallback((el) => {
+        if (el && el.complete) setIsLoaded();
+    }, [setIsLoaded]);
 
     return (
         <div className={`relative overflow-hidden w-full h-full ${wrapperClassName || ""}`} style={style}>
@@ -54,14 +54,14 @@ const SmoothImage = ({ src, thumbnailSrc, alt, wrapperClassName, className, styl
                 src={src}
                 alt={alt}
                 className={`w-full h-full object-cover relative z-10 ${className || ""}`}
-                onLoad={() => setIsLoaded(true)}
+                onLoad={setIsLoaded}
                 onError={(e) => {
                     // If the full image fails (e.g. too large / network), fall back
                     // to the thumbnail so the slot never renders blank in prod.
                     if (thumbnailSrc && e.currentTarget.src !== thumbnailSrc) {
                         e.currentTarget.src = thumbnailSrc;
                     } else {
-                        setIsLoaded(true);
+                        setIsLoaded();
                     }
                 }}
                 initial={{ opacity: 0 }}

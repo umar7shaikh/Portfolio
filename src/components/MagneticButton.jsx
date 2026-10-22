@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { motion, useSpring } from "framer-motion";
 
 const MagneticButton = ({ children, onClick, className = "", style = {} }) => {
     const ref = useRef(null);
-    const [isHovered, setIsHovered] = useState(false);
 
     // Spring physics for smooth return
     const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
@@ -29,7 +28,6 @@ const MagneticButton = ({ children, onClick, className = "", style = {} }) => {
     };
 
     const handleMouseLeave = () => {
-        setIsHovered(false);
         x.set(0);
         y.set(0);
     };
@@ -38,7 +36,6 @@ const MagneticButton = ({ children, onClick, className = "", style = {} }) => {
         <motion.button
             ref={ref}
             onMouseMove={handleMouseMove}
-            onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={handleMouseLeave}
             onClick={onClick}
             style={{

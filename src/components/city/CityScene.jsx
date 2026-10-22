@@ -6,6 +6,7 @@ import { CameraControls, Html, Stars, useGLTF, PerformanceMonitor } from "@react
 import { EffectComposer, Bloom, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
 import { projects } from "../../data/projects.js";
+import { VEHICLES_URL, createVehicleFactory, parseSlot } from "./vehicles.js";
 
 export const MODEL_URL = "/models/city.glb";
 
@@ -22,6 +23,30 @@ const FRAMING = {
 
 const UP = new THREE.Vector3(0, 1, 0);
 
+// Picking uses the real geometry, so whatever is visibly in front wins. Open
+// lattice parts (the radio tower is mostly air) get an invisible box so a click
+// on the tower doesn't fall through its gaps.
+const HIT_MAT = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
+const LATTICE = new Set(["steel"]);
+
+function latticeVolumes(node, key) {
+  const toLocal = node.matrixWorld.clone().invert();
+  const quat = node.getWorldQuaternion(new THREE.Quaternion());
+  const out = [];
+  node.traverse((o) => {
+    if (!o.isMesh || !LATTICE.has(o.material.name)) return;
+    o.geometry.computeBoundingBox();
+    const box = o.geometry.boundingBox.clone().applyMatrix4(toLocal.clone().multiply(o.matrixWorld));
+    const size = box.getSize(new THREE.Vector3());
+    const hit = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), HIT_MAT);
+    hit.position.copy(box.getCenter(new THREE.Vector3()).applyMatrix4(node.matrixWorld));
+    hit.quaternion.copy(quat);
+    hit.userData.key = key;
+    out.push(hit);
+  });
+  return out;
+}
+
 // Emission as authored in Blender is tuned for Eevee; these factors bring it in
 // line with the bloom threshold here so windows glow without blowing out.
 const EMISSIVE_SCALE = {
@@ -36,8 +61,6 @@ const EMISSIVE_SCALE = {
   white_light: 0.45,
   spot: 0.6,
   core: 0.6,
-  head: 0.6,
-  tail: 0.7,
 };
 
 // meshopt quantization stores a dequantization transform on each mesh node, so
@@ -71,11 +94,20 @@ function ownMaterials(obj) {
   return out;
 }
 
+// Two vehicles circling the ring road: [model, paint, lane radius, speed (rad/s)].
+const TRAFFIC = [
+  ["auto", "#f5c518", 12.68, 0.11],
+  ["hatchback", "#e0e4ea", 13.12, -0.085],
+];
+const ROAD_Y = 0.025;
+
 function useCity(lowPower) {
   const { scene } = useGLTF(MODEL_URL, false, true);
+  const { scene: vehiclesScene } = useGLTF(VEHICLES_URL, false, true);
+  const gl = useThree((st) => st.gl);
   return useMemo(() => {
     const root = scene.clone(true);
-    root.updateMatrixWorld(true);
+    const makeVehicle = createVehicleFactory(vehiclesScene, gl);
     root.traverse((o) => {
       if (!o.isMesh) return;
       o.castShadow = !lowPower;
@@ -97,6 +129,24 @@ function useCity(lowPower) {
     const get = (name) => root.getObjectByName(name);
     const noShadow = (o) => o && o.traverse((c) => { c.castShadow = false; });
 
+    // Park a lot vehicle on every slot marker from Blender.
+    const slots = [];
+    root.traverse((o) => { if (o.name.startsWith("slot_")) slots.push(o); });
+    for (const sl of slots) {
+      const { model, hex } = parseSlot(sl.name) || {};
+      const v = model && makeVehicle(model, hex, { shadows: !lowPower });
+      if (v) sl.add(v);
+    }
+    root.updateMatrixWorld(true);
+
+    const traffic = new THREE.Group();
+    const drivers = TRAFFIC.map(([model, hex, r, speed], i) => {
+      const v = makeVehicle(model, hex, { shadows: false });
+      if (!v) return null;
+      traffic.add(v);
+      return { v, r, speed, a: i * Math.PI };
+    }).filter(Boolean);
+
     const buildings = {};
     for (const p of projects) {
       const node = get(`B_${p.key}`);
@@ -110,7 +160,7 @@ function useCity(lowPower) {
         .addScaledVector(out, f.d)
         .addScaledVector(side, f.d * 0.38)
         .addScaledVector(UP, f.h + f.d * 0.42);
-      buildings[p.key] = { node, pos, cam: cam.toArray(), target: target.toArray() };
+      buildings[p.key] = { node, pos, cam: cam.toArray(), target: target.toArray(), hits: p.key === "pravak" ? latticeVolumes(node, p.key) : [] };
     }
 
     const crates = [0, 1, 2, 3, 4].map((i) => get(`erp_crate_${i}`)).filter(Boolean);
@@ -145,9 +195,10 @@ function useCity(lowPower) {
       sirenB: get("med_siren_b") ? ownMaterials(get("med_siren_b"))[0] : null,
       floats: floatNodes.map((o, i) => ({ o: pivot(o), s: i * 1.9 })),
       core,
+      drivers,
     };
-    return { root, buildings, anim };
-  }, [scene, lowPower]);
+    return { root, buildings, anim, traffic };
+  }, [scene, vehiclesScene, gl, lowPower]);
 }
 
 const heartbeat = (t) => {
@@ -173,6 +224,16 @@ function Animator({ anim, reduced }) {
     if (anim.qcMat) anim.qcMat.emissiveIntensity = nearQc < 0.22 ? 12 : 2.2;
 
     if (anim.turntable) anim.turntable.rotation.y += dt * 0.45 * speed;
+
+    // Ring-road traffic. A model's nose points along +X, so face the tangent.
+    anim.drivers.forEach((d) => {
+      d.a += dt * d.speed * speed;
+      const x = Math.cos(d.a) * d.r;
+      const z = Math.sin(d.a) * d.r;
+      const dir = Math.sign(d.speed);
+      d.v.position.set(x, ROAD_Y, z);
+      d.v.rotation.y = -Math.atan2(Math.cos(d.a) * dir, -Math.sin(d.a) * dir);
+    });
 
     anim.rings.forEach((r, i) => {
       const ph = (t * 0.42 * speed + i / anim.rings.length) % 1;
@@ -318,7 +379,7 @@ function Labels({ buildings, activeKey, hoverKey, onSelect, onHover }) {
 }
 
 function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, interactive, panelOpen, onReady }) {
-  const { root, buildings, anim } = useCity(lowPower);
+  const { root, buildings, anim, traffic } = useCity(lowPower);
   const { gl } = useThree();
   const readyFired = useRef(false);
 
@@ -335,12 +396,29 @@ function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, inte
     gl.shadowMap.needsUpdate = true;
   }, [gl, root]);
 
+  // Walk up from the hit mesh to its building root. Only the root itself is
+  // named exactly B_<key>; its meshes are B_<key>_static_1 and so on.
   const keyOf = (obj) => {
+    if (obj.userData.key) return obj.userData.key;
     while (obj) {
-      if (obj.name?.startsWith("B_")) return obj.name.slice(2);
+      const m = /^B_([a-z]+)$/.exec(obj.name || "");
+      if (m && buildings[m[1]]) return m[1];
       obj = obj.parent;
     }
     return null;
+  };
+  // Hits arrive nearest first. A tree or the ground in front of a building
+  // doesn't stop the event, so the building behind it still gets it.
+  const pointerMove = (e) => {
+    const k = keyOf(e.object);
+    if (k) e.stopPropagation();
+    onHover(k);
+  };
+  const click = (e) => {
+    const k = keyOf(e.object);
+    if (!k) return;
+    e.stopPropagation();
+    onSelect(k);
   };
 
   const active = activeKey ? buildings[activeKey] : null;
@@ -349,20 +427,11 @@ function World({ activeKey, hoverKey, onHover, onSelect, lowPower, reduced, inte
 
   return (
     <>
-      <primitive
-        object={root}
-        onPointerMove={(e) => {
-          e.stopPropagation();
-          onHover(keyOf(e.object));
-        }}
-        onPointerOut={() => onHover(null)}
-        onClick={(e) => {
-          const k = keyOf(e.object);
-          if (!k) return;
-          e.stopPropagation();
-          onSelect(k);
-        }}
-      />
+      <primitive object={root} onPointerMove={pointerMove} onClick={click} onPointerOut={() => onHover(null)} />
+      <group onPointerMove={pointerMove} onClick={click}>
+        {Object.values(buildings).flatMap((b) => b.hits).map((h) => <primitive key={h.uuid} object={h} />)}
+      </group>
+      <primitive object={traffic} />
       <Animator anim={anim} reduced={reduced} />
       <FocusRing building={active || hovered} color={accent} />
       <Labels buildings={buildings} activeKey={activeKey} hoverKey={hoverKey} onSelect={onSelect} onHover={onHover} />
