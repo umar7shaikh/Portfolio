@@ -1,7 +1,6 @@
 /* 3D work island (Work.jsx + CityScene.jsx) */
 .works-city {
-  background: #05070d;
-  border-top: 1px solid #111520;
+  background: #0a0a0a;
   position: relative;
 }
 .works-city .works-label-bar {
@@ -9,7 +8,7 @@
   align-items: center;
   gap: 12px;
   padding: 18px 64px;
-  border-bottom: 1px solid #141926;
+  border-bottom: 1px solid #141414;
   position: relative;
   z-index: 3;
 }
@@ -19,7 +18,7 @@
   text-transform: uppercase;
   color: #8b93a7;
 }
-.works-label-line { flex: 1; height: 1px; background: #141926; }
+.works-label-line { flex: 1; height: 1px; background: #141414; }
 .works-city .works-view-all-link {
   font: 500 11px/1 'Inter', sans-serif;
   letter-spacing: 0.18em;
@@ -36,7 +35,7 @@
   min-height: 640px;
   max-height: 1100px;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 60%, #0c1222 0%, #05070d 70%);
+  background: #0a0a0a;
 }
 .city-stage canvas { display: block; outline: none; }
 

@@ -3,14 +3,16 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { CameraControls, Html, Stars, useGLTF, PerformanceMonitor } from "@react-three/drei";
-import { EffectComposer, Bloom, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, ToneMapping } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
 import { projects } from "../../data/projects.js";
 import { VEHICLES_URL, createVehicleFactory, parseSlot } from "./vehicles.js";
 
 export const MODEL_URL = "/models/city.glb";
 
-const BG = "#05070d";
+// Renders as the hero's #0a0a0a. ACES tone mapping crushes near-black, so the
+// input has to be a touch lighter for the output to match (measured on screen).
+const BG = "#1c1c1c";
 const OVERVIEW = { cam: [0, 23, 43], target: [0, 0.6, 0] };
 // Per-building framing: look-at height and camera distance.
 const FRAMING = {
@@ -95,9 +97,11 @@ function ownMaterials(obj) {
 }
 
 // Two vehicles circling the ring road: [model, paint, lane radius, speed (rad/s)].
+// Each has its own lane, 0.8 apart. The widest car is about 0.92 across, so
+// two half-widths (0.46 + 0.35) fit between lane centres and they never touch.
 const TRAFFIC = [
-  ["auto", "#f5c518", 12.68, 0.11],
-  ["hatchback", "#e0e4ea", 13.12, -0.085],
+  ["auto", "#f5c518", 13.45, 0.11],
+  ["hatchback", "#e0e4ea", 14.25, -0.085],
 ];
 const ROAD_Y = 0.025;
 
@@ -507,7 +511,6 @@ export default function CityScene({
       />
       <EffectComposer multisampling={lowPower ? 0 : 4}>
         <Bloom mipmapBlur intensity={0.9} luminanceThreshold={1} luminanceSmoothing={0.25} radius={0.72} />
-        <Vignette offset={0.28} darkness={0.62} />
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       </EffectComposer>
     </Canvas>

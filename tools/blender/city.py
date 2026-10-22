@@ -404,7 +404,7 @@ def b_erp():
     box((0.08, 0.84, 0.05), (qx, cy, G + 1.22), M["qc"])
     qc = join(take(), "erp_qc_light")
     # dispatch truck backed up to the pallets, nose out
-    truck = slot("mini_truck", "e8e6df", (3.05, 3.2, G), 90)
+    truck = slot("mini_truck", "e8e6df", (3.05, 2.85, G), 90)
     return static, crates + [qc, truck]
 
 
@@ -756,7 +756,7 @@ def island():
             p = d * (r0 + (r1 - r0) * t) + side * 0.9
             lamp((p.x, p.y, 0.0), 1.3)
     # outer ring path
-    annulus(12.4, 13.4, 0.02, M["asphalt"], 120)
+    annulus(13.05, 14.65, 0.02, M["asphalt"], 140)
     # scatter trees, bushes and rocks, keeping clear of plots and paths
     plots = [V((math.cos(math.radians(d)) * R_BUILD, math.sin(math.radians(d)) * R_BUILD, 0)) for _, d, _ in BUILDINGS]
     placed = []
@@ -773,7 +773,7 @@ def island():
             along = p.dot(d)
             if 2.5 < along < R_BUILD and (p - d * along).length < 1.3:
                 return False
-        if 12.3 < p.length < 13.5:
+        if 12.85 < p.length < 14.85:
             return False
         for q in placed:
             if (p - q).length < 0.9:
@@ -784,7 +784,7 @@ def island():
     while count < 95 and tries < 3000:
         tries += 1
         a = random.uniform(0, math.tau)
-        r = math.sqrt(random.uniform(3.8 ** 2, 14.7 ** 2))
+        r = math.sqrt(random.uniform(3.8 ** 2, 15.1 ** 2))
         p = V((math.cos(a) * r, math.sin(a) * r, 0))
         if not clear(p, 0.0):
             continue
